@@ -1,0 +1,24 @@
+Set-Content -Path .\src\io_guard.py -Encoding utf8 -Value @'
+from __future__ import annotations
+import os, json
+from typing import Any
+from .governor import Governor, GovernorConfig
+
+# Singleton governor using env or current working dir
+_G = Governor(GovernorConfig.from_env())
+
+def write_text(path: str, text: str) -> None:
+    _G.write_text(path, text)
+
+def append_text(path: str, text: str) -> None:
+    _G.append_text(path, text)
+
+def write_json(path: str, obj: Any, sort_keys: bool = True, indent: int = 2) -> None:
+    _G.write_json(path, obj, sort_keys=sort_keys, indent=indent)
+
+def copy_file(src: str, dst: str) -> None:
+    _G.copy_file(src, dst)
+
+def approved_targets() -> list[str]:
+    return _G.approved_targets()
+'@
