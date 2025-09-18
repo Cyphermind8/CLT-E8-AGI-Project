@@ -26,3 +26,16 @@ def start_run(meta: Dict[str, Any]) -> Path:
 def finish_run(run_dir: Union[str, Path], summary: Dict[str, Any]) -> None:
     run_dir = _anchor(run_dir)
     write_json(str(run_dir / "summary.json"), {**summary, "finished_ts": time.time()})
+from contextlib import contextmanager
+
+@contextmanager
+def runlog(meta):
+    rd = start_run(meta)
+    ok = True
+    try:
+        yield rd
+    except Exception:
+        ok = False
+        raise
+    finally:
+        finish_run(rd, {"ok": ok})
