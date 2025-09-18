@@ -1,6 +1,3 @@
-Set-Location C:\AI_Project
-
-$purePython = @'
 from __future__ import annotations
 from typing import Any
 from .governor import Governor, GovernorConfig
@@ -21,7 +18,3 @@ def copy_file(src: str, dst: str) -> None:
 
 def approved_targets() -> list[str]:
     return _G.approved_targets()
-'@
-
-# Hard overwrite with ONLY the Python above
-Set-Content .\src\io_guard.py $purePython -Encoding utf8
