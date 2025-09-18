@@ -1,0 +1,21 @@
+# Default configuration (v1)
+heads: 12
+tanh_k: 1.2
+critic:
+  enable_math: true
+  enable_code: true
+  timeout_s: 5
+coherence_weights:
+  d_entropy: 1.0
+  consistency: 1.2
+  contradictions: 1.5
+tms:
+  penalty: 0.2
+  decay: 0.95
+safety:
+  sandbox: true
+  allow_network_writes: false
+  cpu_limit_percent: 80
+  time_limit_s: 30
+logging:
+  level: INFO

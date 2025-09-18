@@ -1,0 +1,286 @@
+{
+  "modifications": [
+    {
+      "applied": false,
+      "cycle": 0,
+      "stdout": "[CYCLE 0] starting...\n[=] AllowedFunctions: []\n[=] No safe improvement proposed (empty edits).\n[CYCLE 0] duration=0.0s exit=0\n\n[orchestrator] elapsed=0.000s exit=0",
+      "strict": false,
+      "target": "rotating candidates",
+      "timestamp": "2025-09-16T12:51:13.110094Z"
+    },
+    {
+      "applied": false,
+      "cycle": 1,
+      "stdout": "[CYCLE 1] starting...\n[=] AllowedFunctions: ['parse_args', 'main']\n[=] No safe improvement proposed (empty edits).\n[CYCLE 1] duration=0.0s exit=0\n\n[orchestrator] elapsed=0.001s exit=0",
+      "strict": false,
+      "target": "rotating candidates",
+      "timestamp": "2025-09-16T12:51:13.112282Z"
+    },
+    {
+      "applied": false,
+      "cycle": 2,
+      "stdout": "[CYCLE 2] starting...\n[=] AllowedFunctions: ['fibonacci', 'analyze_code']\n[=] No safe improvement proposed (empty edits).\n[CYCLE 2] duration=0.0s exit=0\n\n[orchestrator] elapsed=0.001s exit=0",
+      "strict": false,
+      "target": "rotating candidates",
+      "timestamp": "2025-09-16T12:51:13.113563Z"
+    },
+    {
+      "applied": false,
+      "cycle": 0,
+      "stdout": "[CYCLE 0] starting...\n[=] AllowedFunctions: []\n[=] No safe improvement proposed (empty edits).\n[CYCLE 0] duration=0.0s exit=0\n\n[orchestrator] elapsed=0.001s exit=0",
+      "strict": false,
+      "target": "rotating candidates",
+      "timestamp": "2025-09-16T12:55:40.433071Z"
+    },
+    {
+      "applied": false,
+      "cycle": 1,
+      "stdout": "[CYCLE 1] starting...\n[=] AllowedFunctions: ['parse_args', 'main']\n[=] No safe improvement proposed (empty edits).\n[CYCLE 1] duration=0.0s exit=0\n\n[orchestrator] elapsed=0.000s exit=0",
+      "strict": false,
+      "target": "rotating candidates",
+      "timestamp": "2025-09-16T12:55:40.434075Z"
+    },
+    {
+      "applied": false,
+      "cycle": 2,
+      "stdout": "[CYCLE 2] starting...\n[=] AllowedFunctions: ['fibonacci', 'analyze_code']\n[=] No safe improvement proposed (empty edits).\n[CYCLE 2] duration=0.0s exit=0\n\n[orchestrator] elapsed=0.000s exit=0",
+      "strict": false,
+      "target": "rotating candidates",
+      "timestamp": "2025-09-16T12:55:40.435580Z"
+    },
+    {
+      "applied": false,
+      "cycle": 0,
+      "stdout": "[CYCLE 0] starting...\n[=] AllowedFunctions: []\n[=] No safe improvement proposed (empty edits).\n[CYCLE 0] duration=0.0s exit=0\n\n[orchestrator] elapsed=0.002s exit=0",
+      "strict": false,
+      "target": "rotating candidates",
+      "timestamp": "2025-09-16T13:02:23.872933Z"
+    },
+    {
+      "applied": false,
+      "cycle": 1,
+      "stdout": "[CYCLE 1] starting...\n[=] AllowedFunctions: ['parse_args', 'main']\n[=] No safe improvement proposed (empty edits).\n[CYCLE 1] duration=0.0s exit=0\n\n[orchestrator] elapsed=0.001s exit=0",
+      "strict": false,
+      "target": "rotating candidates",
+      "timestamp": "2025-09-16T13:02:23.878441Z"
+    },
+    {
+      "applied": false,
+      "cycle": 2,
+      "stdout": "[CYCLE 2] starting...\n[=] AllowedFunctions: ['fibonacci', 'analyze_code']\n[=] No safe improvement proposed (empty edits).\n[CYCLE 2] duration=0.0s exit=0\n\n[orchestrator] elapsed=0.002s exit=0",
+      "strict": false,
+      "target": "rotating candidates",
+      "timestamp": "2025-09-16T13:02:23.882100Z"
+    },
+    {
+      "applied": false,
+      "cycle": 0,
+      "stdout": "[CYCLE 0] starting...\n[=] AllowedFunctions: []\n[=] No safe improvement proposed (empty edits).\n[CYCLE 0] duration=0.0s exit=0\n\n[orchestrator] elapsed=0.001s exit=0",
+      "strict": false,
+      "target": "rotating candidates",
+      "timestamp": "2025-09-16T17:33:32.787723Z"
+    },
+    {
+      "applied": false,
+      "cycle": 1,
+      "stdout": "[CYCLE 1] starting...\n[=] AllowedFunctions: ['parse_args', 'main']\n[=] No safe improvement proposed (empty edits).\n[CYCLE 1] duration=0.0s exit=0\n\n[orchestrator] elapsed=0.001s exit=0",
+      "strict": false,
+      "target": "rotating candidates",
+      "timestamp": "2025-09-16T17:33:32.790018Z"
+    },
+    {
+      "applied": false,
+      "cycle": 2,
+      "stdout": "[CYCLE 2] starting...\n[=] AllowedFunctions: ['fibonacci', 'analyze_code']\n[=] No safe improvement proposed (empty edits).\n[CYCLE 2] duration=0.0s exit=0\n\n[orchestrator] elapsed=0.001s exit=0",
+      "strict": false,
+      "target": "rotating candidates",
+      "timestamp": "2025-09-16T17:33:32.791023Z"
+    },
+    {
+      "applied": false,
+      "cycle": 0,
+      "stdout": "[CYCLE 0] starting...\n[=] AllowedFunctions: []\n[=] No safe improvement proposed (empty edits).\n[CYCLE 0] duration=0.0s exit=0\n\n[orchestrator] elapsed=0.000s exit=0",
+      "strict": false,
+      "target": "rotating candidates",
+      "timestamp": "2025-09-16T17:39:49.880031Z"
+    },
+    {
+      "applied": false,
+      "cycle": 1,
+      "stdout": "[CYCLE 1] starting...\n[=] AllowedFunctions: ['parse_args', 'main']\n[=] No safe improvement proposed (empty edits).\n[CYCLE 1] duration=0.0s exit=0\n\n[orchestrator] elapsed=0.001s exit=0",
+      "strict": false,
+      "target": "rotating candidates",
+      "timestamp": "2025-09-16T17:39:49.882038Z"
+    },
+    {
+      "applied": false,
+      "cycle": 2,
+      "stdout": "[CYCLE 2] starting...\n[=] AllowedFunctions: ['fibonacci', 'analyze_code']\n[=] No safe improvement proposed (empty edits).\n[CYCLE 2] duration=0.0s exit=0\n\n[orchestrator] elapsed=0.001s exit=0",
+      "strict": false,
+      "target": "rotating candidates",
+      "timestamp": "2025-09-16T17:39:49.884120Z"
+    },
+    {
+      "applied": false,
+      "cycle": 0,
+      "stdout": "[CYCLE 0] starting...\n[=] AllowedFunctions: ['__init__', 'load_memory', 'save_memory', 'improve_code', 'generate_improvement', 'evaluate_performance']\n[=] No safe improvement proposed (empty edits).\n[CYCLE 0] duration=0.0s exit=0\n\n[orchestrator] elapsed=0.008s exit=0",
+      "strict": true,
+      "target": "ai_core.py",
+      "timestamp": "2025-09-17T07:15:46.663187Z"
+    },
+    {
+      "applied": false,
+      "cycle": 0,
+      "stdout": "[CYCLE 0] starting...\n[=] AllowedFunctions: ['__init__', 'load_memory', 'save_memory', 'improve_code', 'generate_improvement', 'evaluate_performance']\n[=] No safe improvement proposed (empty edits).\n[CYCLE 0] duration=0.0s exit=0\n\n[orchestrator] elapsed=0.001s exit=0",
+      "strict": true,
+      "target": "ai_core.py",
+      "timestamp": "2025-09-17T07:16:55.833393Z"
+    },
+    {
+      "applied": false,
+      "cycle": 0,
+      "stdout": "[CYCLE 0] starting...\n[=] AllowedFunctions: ['__init__', 'load_memory', 'save_memory', 'improve_code', 'generate_improvement', 'evaluate_performance']\n[=] No safe improvement proposed (empty edits).\n[CYCLE 0] duration=0.0s exit=0\n\n[orchestrator] elapsed=0.001s exit=0",
+      "strict": true,
+      "target": "ai_core.py",
+      "timestamp": "2025-09-17T07:25:06.754045Z"
+    },
+    {
+      "applied": false,
+      "cycle": 0,
+      "stdout": "[CYCLE 0] starting...\n[=] AllowedFunctions: ['__init__', 'load_memory', 'save_memory', 'improve_code', 'generate_improvement', 'evaluate_performance']\n[=] No safe improvement proposed (empty edits).\n[CYCLE 0] duration=0.0s exit=0\n\n[orchestrator] elapsed=0.002s exit=0",
+      "strict": true,
+      "target": "ai_core.py",
+      "timestamp": "2025-09-17T07:32:16.740272Z"
+    },
+    {
+      "applied": false,
+      "cycle": 0,
+      "stdout": "[CYCLE 0] starting...\n[=] AllowedFunctions: []\n[=] No safe improvement proposed (empty edits).\n[CYCLE 0] duration=0.0s exit=0\n\n[orchestrator] elapsed=0.001s exit=0",
+      "strict": true,
+      "target": "code_analysis.py",
+      "timestamp": "2025-09-17T07:38:24.343143Z"
+    },
+    {
+      "applied": false,
+      "cycle": 0,
+      "stdout": "[CYCLE 0] starting...\n[=] AllowedFunctions: []\n[=] No safe improvement proposed (empty edits).\n[CYCLE 0] duration=0.0s exit=0\n\n[orchestrator] elapsed=0.002s exit=0",
+      "strict": true,
+      "target": "rotating candidates",
+      "timestamp": "2025-09-17T07:38:41.404889Z"
+    },
+    {
+      "applied": false,
+      "cycle": 1,
+      "stdout": "[CYCLE 1] starting...\n[=] AllowedFunctions: ['parse_args', 'main']\n[=] No safe improvement proposed (empty edits).\n[CYCLE 1] duration=0.0s exit=0\n\n[orchestrator] elapsed=0.002s exit=0",
+      "strict": true,
+      "target": "rotating candidates",
+      "timestamp": "2025-09-17T07:38:41.407889Z"
+    },
+    {
+      "applied": false,
+      "cycle": 2,
+      "stdout": "[CYCLE 2] starting...\n[=] AllowedFunctions: ['fibonacci', 'analyze_code']\n[=] No safe improvement proposed (empty edits).\n[CYCLE 2] duration=0.0s exit=0\n\n[orchestrator] elapsed=0.005s exit=0",
+      "strict": true,
+      "target": "rotating candidates",
+      "timestamp": "2025-09-17T07:38:41.420230Z"
+    },
+    {
+      "applied": true,
+      "cycle": 0,
+      "stdout": "[CYCLE 0] starting...\n[=] AllowedFunctions: ['analyze_code', 'main']\n[+] Applied: ['add_empty_guard:analyze_code', 'entrylog:main']\n[CYCLE 0] duration=0.0s exit=0\n\n[orchestrator] elapsed=0.012s exit=0",
+      "strict": true,
+      "target": "code_analysis.py",
+      "timestamp": "2025-09-18T05:33:19.034114Z"
+    },
+    {
+      "applied": false,
+      "cycle": 0,
+      "stdout": "[CYCLE 0] starting...\n[=] AllowedFunctions: ['analyze_code', 'main']\n[=] No safe improvement proposed (empty edits).\n[CYCLE 0] duration=0.0s exit=0\n\n[orchestrator] elapsed=0.007s exit=0",
+      "strict": true,
+      "target": "code_analysis.py",
+      "timestamp": "2025-09-18T05:35:44.120248Z"
+    }
+  ],
+  "runs": [
+    {
+      "kind": "smoke_v1",
+      "run1": {
+        "latency_ms": 0.25,
+        "steps": 1,
+        "success": true
+      },
+      "run2": {
+        "latency_ms": 0.21,
+        "steps": 1,
+        "success": true,
+        "used_memory": true
+      },
+      "task": "Compute 21 + 21 using available tools, verify, and record the method.",
+      "timestamp": "2025-09-13 19:14:31"
+    },
+    {
+      "kind": "smoke_v1",
+      "run1": {
+        "latency_ms": 0.28,
+        "steps": 1,
+        "success": true
+      },
+      "run2": {
+        "latency_ms": 0.24,
+        "steps": 1,
+        "success": true,
+        "used_memory": true
+      },
+      "task": "Compute 21 + 21 using available tools, verify, and record the method.",
+      "timestamp": "2025-09-13 19:19:39"
+    },
+    {
+      "kind": "smoke_v1",
+      "run1": {
+        "latency_ms": 0.29,
+        "steps": 1,
+        "success": true
+      },
+      "run2": {
+        "latency_ms": 0.24,
+        "steps": 1,
+        "success": true,
+        "used_memory": true
+      },
+      "task": "Compute 21 + 21 using available tools, verify, and record the method.",
+      "timestamp": "2025-09-13 19:29:33"
+    },
+    {
+      "kind": "smoke_v1",
+      "run1": {
+        "latency_ms": 0.36,
+        "steps": 1,
+        "success": true
+      },
+      "run2": {
+        "latency_ms": 0.23,
+        "steps": 1,
+        "success": true,
+        "used_memory": true
+      },
+      "task": "Compute 21 + 21 using available tools, verify, and record the method.",
+      "timestamp": "2025-09-13 21:30:23"
+    },
+    {
+      "kind": "smoke_v1",
+      "run1": {
+        "latency_ms": 0.27,
+        "steps": 1,
+        "success": true
+      },
+      "run2": {
+        "latency_ms": 0.18,
+        "steps": 1,
+        "success": true,
+        "used_memory": true
+      },
+      "task": "Compute 21 + 21 using available tools, verify, and record the method.",
+      "timestamp": "2025-09-15 03:42:05"
+    }
+  ]
+}

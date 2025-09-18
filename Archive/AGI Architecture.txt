@@ -1,0 +1,10 @@
+📂 AI_Project/ (Main Directory)
+┣ 📜 api.py – AI’s Web API (FastAPI, Mistral-7B)
+┣ 📜 ai_system.py – Core AI self-improvement engine
+┣ 📜 knowledge_retrieval.py – Fetches data (GitHub, ArXiv, Wikipedia)
+┣ 📜 self_validation.py – Ensures AI applies only useful improvements
+┣ 📜 api_resilience.py – Handles API failures & timeouts
+┣ 📜 auto_debug.py – AI self-diagnoses errors & improves itself
+┣ 📜 ai_memory.json – AI’s persistent long-term memory
+┣ 📜 ai_performance_log.json – Tracks self-improvement & learning
+┣ 📜 requirements.txt – All dependencies required for the AI

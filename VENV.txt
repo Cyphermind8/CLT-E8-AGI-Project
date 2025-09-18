@@ -1,0 +1,2 @@
+Set-Location C:\AI_Project
+.\.venv\Scripts\Activate

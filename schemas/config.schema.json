@@ -1,0 +1,62 @@
+{
+  "title": "CLT-E8 Config Schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["project", "metrics", "guardrails", "smoke_task"],
+  "properties": {
+    "project": {
+      "type": "object",
+      "required": ["name", "mode", "write_dirs"],
+      "additionalProperties": true,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "mode": { "type": "string", "minLength": 1 },
+        "write_dirs": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "required": ["tracked", "success_required"],
+      "additionalProperties": true,
+      "properties": {
+        "tracked": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["success", "steps", "latency_ms", "used_memory", "determinism"]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "success_required": { "type": "boolean" }
+      }
+    },
+    "guardrails": {
+      "type": "object",
+      "required": ["code_read_only", "allow_network", "allow_filesystem_writes_only_in"],
+      "additionalProperties": true,
+      "properties": {
+        "code_read_only": { "type": "boolean" },
+        "allow_network": { "type": "boolean" },
+        "allow_filesystem_writes_only_in": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1
+        }
+      }
+    },
+    "smoke_task": {
+      "type": "object",
+      "required": ["text", "expected_answer"],
+      "additionalProperties": true,
+      "properties": {
+        "text": { "type": "string", "minLength": 1 },
+        "expected_answer": {}
+      }
+    }
+  }
+}

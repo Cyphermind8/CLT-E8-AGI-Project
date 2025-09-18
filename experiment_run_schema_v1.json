@@ -1,0 +1,293 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CLT\u2013E8 Experiment Run Log (v1)",
+  "type": "object",
+  "required": [
+    "run_id",
+    "date",
+    "setup",
+    "metrics",
+    "attempts"
+  ],
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "description": "Unique ID like EXP_YYYYMMDD_HHMM"
+    },
+    "date": {
+      "type": "string",
+      "description": "ISO date of the run"
+    },
+    "setup": {
+      "type": "object",
+      "required": [
+        "code_version",
+        "config",
+        "seeds",
+        "dataset",
+        "hardware",
+        "notes"
+      ],
+      "properties": {
+        "code_version": {
+          "type": "string",
+          "description": "git hash or file version summary"
+        },
+        "config": {
+          "type": "object",
+          "description": "Snapshot of effective config (merged) at run time"
+        },
+        "seeds": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        },
+        "dataset": {
+          "type": "string",
+          "enum": [
+            "MathCode",
+            "CSV_Demo",
+            "Retrieval_Toy",
+            "Contradiction_Toy",
+            "Other"
+          ]
+        },
+        "hardware": {
+          "type": "object",
+          "properties": {
+            "cpu": {
+              "type": "string"
+            },
+            "gpu": {
+              "type": "string"
+            },
+            "ram_gb": {
+              "type": "number"
+            }
+          }
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "required": [
+        "GC",
+        "GfD",
+        "MU",
+        "CH",
+        "SRE",
+        "CSC"
+      ],
+      "properties": {
+        "GC": {
+          "type": "object",
+          "properties": {
+            "passed": {
+              "type": "integer"
+            },
+            "total": {
+              "type": "integer"
+            },
+            "pct": {
+              "type": "number"
+            }
+          }
+        },
+        "GfD": {
+          "type": "object",
+          "properties": {
+            "passed": {
+              "type": "integer"
+            },
+            "total": {
+              "type": "integer"
+            },
+            "pct": {
+              "type": "number"
+            }
+          }
+        },
+        "MU": {
+          "type": "object",
+          "properties": {
+            "delta_accuracy": {
+              "type": "number"
+            },
+            "delta_latency": {
+              "type": "number"
+            }
+          }
+        },
+        "CH": {
+          "type": "object",
+          "properties": {
+            "resolved": {
+              "type": "integer"
+            },
+            "injected": {
+              "type": "integer"
+            },
+            "pct": {
+              "type": "number"
+            }
+          }
+        },
+        "SRE": {
+          "type": "object",
+          "properties": {
+            "recovered": {
+              "type": "integer"
+            },
+            "failures": {
+              "type": "integer"
+            },
+            "pct": {
+              "type": "number"
+            }
+          }
+        },
+        "CSC": {
+          "type": "object",
+          "properties": {
+            "r": {
+              "type": "number"
+            },
+            "p": {
+              "type": "number"
+            }
+          }
+        }
+      }
+    },
+    "ablation": {
+      "type": "object",
+      "properties": {
+        "memory_mode": {
+          "type": "string",
+          "enum": [
+            "multi_head",
+            "single_head"
+          ]
+        },
+        "slip_rotations": {
+          "type": "boolean"
+        },
+        "tms_enabled": {
+          "type": "boolean"
+        },
+        "critic_enabled": {
+          "type": "boolean"
+        },
+        "world_model_enabled": {
+          "type": "boolean"
+        }
+      }
+    },
+    "attempts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "task_id",
+          "hypothesis_id",
+          "coherence",
+          "pass",
+          "timing_ms"
+        ],
+        "properties": {
+          "task_id": {
+            "type": "string"
+          },
+          "hypothesis_id": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string",
+            "description": "full | single_head | no_slips | no_tms | no_critic | no_world_model"
+          },
+          "coherence": {
+            "type": "object",
+            "required": [
+              "d_entropy",
+              "consistency",
+              "contradictions",
+              "total"
+            ],
+            "properties": {
+              "d_entropy": {
+                "type": "number"
+              },
+              "consistency": {
+                "type": "number"
+              },
+              "contradictions": {
+                "type": "number"
+              },
+              "total": {
+                "type": "number"
+              }
+            }
+          },
+          "retrieval": {
+            "type": "object",
+            "properties": {
+              "k": {
+                "type": "integer"
+              },
+              "supports_found": {
+                "type": "integer"
+              },
+              "supports_required": {
+                "type": "integer"
+              },
+              "heads_consensus": {
+                "type": "number",
+                "description": "fraction of heads agreeing on top item [0,1]"
+              }
+            }
+          },
+          "contradictions": {
+            "type": "integer",
+            "description": "conflict count from TMS-lite for this attempt"
+          },
+          "pass": {
+            "type": "boolean"
+          },
+          "error": {
+            "type": "string"
+          },
+          "timing_ms": {
+            "type": "number"
+          },
+          "slipstate_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "properties": {
+        "plots": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "logs_path": {
+          "type": "string"
+        },
+        "config_snapshot_path": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

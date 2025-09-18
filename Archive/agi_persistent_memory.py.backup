@@ -1,0 +1,186 @@
+import json
+import os
+import random
+import time
+import threading
+import shutil
+import sys
+
+# Persistent memory file
+MEMORY_FILE = "ai_memory.json"
+SELF_MODIFY_FILE = "agi_persistent_memory.py"
+
+class SelfImprovingAI:
+    def __init__(self):
+        self.version = 1.0
+        self.improvements = []
+        self.goals = []
+        self.history = []
+        self.evolution_threshold = 0.5  # Dynamic threshold for improvements
+        self.load_memory()
+        self.auto_evolution_running = False
+        self.auto_evolve_thread = None
+        self.conversation_memory = []
+    
+    def load_memory(self):
+        if os.path.exists(MEMORY_FILE):
+            with open(MEMORY_FILE, "r") as file:
+                data = json.load(file)
+                self.version = data.get("version", 1.0)
+                self.improvements = data.get("improvements", [])
+                self.goals = data.get("goals", [])
+                self.history = data.get("history", [])
+                self.evolution_threshold = data.get("evolution_threshold", 0.5)
+                self.conversation_memory = data.get("conversation_memory", [])
+            print(f"[AI] Loaded version {self.version} with {len(self.improvements)} improvements, {len(self.goals)} goals, {len(self.history)} history records, and threshold {self.evolution_threshold:.2f}.")
+        else:
+            print("[AI] No memory file found. Starting fresh.")
+    
+    def save_memory(self):
+        data = {
+            "version": self.version,
+            "improvements": self.improvements,
+            "goals": self.goals,
+            "history": self.history,
+            "evolution_threshold": self.evolution_threshold,
+            "conversation_memory": self.conversation_memory[-5:]  # Keep only the last 5 interactions
+        }
+        with open(MEMORY_FILE, "w") as file:
+            json.dump(data, file, indent=4)
+        print("[AI] Memory saved.")
+    
+    def set_goal(self, goal):
+        print(f"[AI] Setting new goal: {goal}")
+        self.goals.append(goal)
+        self.save_memory()
+    
+    def check_goals(self):
+        if self.goals:
+            print("[AI] Stored Goals:")
+            for goal in self.goals:
+                print(f"- {goal}")
+        else:
+            print("[AI] No goals set.")
+    
+    def analyze(self):
+        print("[AI] Analyzing its own logic...")
+        suggestion = f"Improve function {random.randint(1,10)}"
+        print(f"[AI] Suggestion: {suggestion}")
+        self.history.append(("analysis", suggestion))
+        return suggestion
+    
+    def infer_logic(self):
+        if not self.history:
+            print("[AI] No prior analysis available for inference.")
+            return
+        
+        print("[AI] Performing logical inference...")
+        analysis_results = set(entry[1] for entry in self.history if entry[0] == "analysis")
+        if len(analysis_results) > 1:
+            inference = f"Combining insights from {len(analysis_results)} past analyses to refine improvements."
+        else:
+            inference = "Not enough past data for deep inference."
+        
+        print(f"[AI] Inference: {inference}")
+        self.history.append(("inference", inference))
+        self.save_memory()
+    
+    def improve(self):
+        suggestion = self.analyze()
+        score = random.uniform(0, 1)
+        if score > self.evolution_threshold:
+            self.improvements.append(suggestion)
+            self.version += 0.1
+            print(f"[AI] Applied improvement: {suggestion} with score {score:.2f}")
+            print(f"[AI] Version upgraded to {self.version}")
+            self.save_memory()
+            self.modify_self(suggestion)
+        else:
+            print(f"[AI] Discarded suggestion: {suggestion} with score {score:.2f}")
+    
+    def modify_self(self, improvement):
+        print("[AI] Attempting self-modification...")
+        try:
+            backup_file = SELF_MODIFY_FILE + ".backup"
+            shutil.copy(SELF_MODIFY_FILE, backup_file)
+            
+            with open(SELF_MODIFY_FILE, "r", encoding="utf-8") as file:
+                code = file.readlines()
+            
+            mod_index = random.randint(0, len(code) - 1)
+            code.insert(mod_index, f"# AI Modification: {improvement}\n")
+            
+            # Ensure version update persists in the script
+            for i in range(len(code)):
+                if "self.version =" in code[i]:
+                    code[i] = f"        self.version = {self.version}\n"
+                    break
+            
+            with open(SELF_MODIFY_FILE, "w", encoding="utf-8") as file:
+                file.writelines(code)
+            
+            time.sleep(1)  # Ensure file write completes
+            print("[AI] Self-modification successful. Restarting...")
+            self.restart()
+        except Exception as e:
+            print(f"[AI] Self-modification failed: {e}")
+            shutil.copy(backup_file, SELF_MODIFY_FILE)
+            print("[AI] Reverted to previous version.")
+    
+    def restart(self):
+        print("[AI] Restarting...")
+        self.save_memory()  # Ensure latest version is saved before restart
+        os.execv(sys.executable, [sys.executable] + sys.argv)
+    
+    def stop_auto_evolution(self):
+        print("[AI] Stopping continuous evolution mode...")
+        self.auto_evolution_running = False
+        if self.auto_evolve_thread:
+            self.auto_evolve_thread.join()
+            self.auto_evolve_thread = None
+    
+    def auto_evolve(self):
+        if self.auto_evolution_running:
+            print("[AI] Auto-evolution is already running.")
+            return
+        
+        print("[AI] Entering continuous evolution mode. Type 'stop_auto' to stop.")
+        self.auto_evolution_running = True
+        
+        def evolve_loop():
+            while self.auto_evolution_running:
+                self.improve()
+                time.sleep(5)
+        
+        self.auto_evolve_thread = threading.Thread(target=evolve_loop, daemon=True)
+        self.auto_evolve_thread.start()
+    
+    def run(self):
+        while True:
+            command = input("Enter command (analyze/infer_logic/improve/auto_evolve/stop_auto/set_goal/check_goals/exit): ").strip().lower()
+            if command == "analyze":
+                self.analyze()
+            elif command == "infer_logic":
+                self.infer_logic()
+            elif command == "improve":
+                self.improve()
+            elif command == "auto_evolve":
+                self.auto_evolve()
+            elif command == "stop_auto":
+                self.stop_auto_evolution()
+            elif command == "set_goal":
+                goal = input("Enter a goal: ").strip()
+                self.set_goal(goal)
+            elif command == "check_goals":
+                self.check_goals()
+            elif command == "exit":
+                self.stop_auto_evolution()
+                self.save_memory()
+                print("[AI] Exiting and saving memory.")
+                break
+            else:
+                print("[AI] Unknown command.")
+
+if __name__ == "__main__":
+    ai = SelfImprovingAI()
+    ai.run()

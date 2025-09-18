@@ -1,0 +1,12 @@
+{
+  "version": "1.2",
+  "criteria": [
+    {"name":"Correctness","weight":0.25,"min":"all tests pass or test stubs added / runnable"},
+    {"name":"Robustness","weight":0.15,"min":"handles common edge cases; defensive I/O"},
+    {"name":"Reproducibility","weight":0.15,"min":"pin deps or document exact versions; deterministic paths"},
+    {"name":"Performance","weight":0.15,"min":"no obvious quadratic blowups; basic profiling hooks"},
+    {"name":"Clarity","weight":0.15,"min":"readable structure; docstrings for public funcs"},
+    {"name":"Safety","weight":0.15,"min":"backups before write; rollback path; no destructive ops by default"}
+  ],
+  "threshold": 9.5
+}

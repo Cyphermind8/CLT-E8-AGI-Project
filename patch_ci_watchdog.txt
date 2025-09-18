@@ -1,0 +1,146 @@
+﻿# FILE: scripts\run_ci.ps1
+param(
+  [int]$Cycles = 20,
+  [int]$TimeBudgetMin = 120,
+  [int]$Determinism = 2,
+  [int]$Population = 2,
+  [double]$MinRate = 1.0,
+  [double]$EqualRateSpeedup = 0.03,
+  [switch]$MicroGate,
+  [double]$MicroSpeedup = 0.03,
+  [int]$BenchTimeoutSec = 300,
+  [int]$PytestTimeoutSec = 120,
+  [int]$PerCycleHardLimitSec = 480
+)
+
+$ErrorActionPreference = "Stop"
+$ws = Split-Path -Parent $MyInvocation.MyCommand.Path | Split-Path -Parent
+Set-Location $ws
+
+$logs = Join-Path $ws "logs"
+$reports = Join-Path $ws "reports"
+New-Item -ItemType Directory -Force -Path $logs,$reports | Out-Null
+
+$stamp = Get-Date -Format "yyyyMMdd_HHmmss"
+$sessionLog = Join-Path $logs "ci_session_$stamp.log"
+$sessionJson = Join-Path $reports "ci_session_$stamp.json"
+"[$(Get-Date -Format s)] [CI] Session $stamp starting in $ws" | Tee-Object -FilePath $sessionLog
+
+"[$(Get-Date -Format s)] [CI] Seeding baselines..." | Tee-Object -FilePath $sessionLog -Append
+powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $ws "scripts\run_all.ps1") | Tee-Object -FilePath $sessionLog -Append
+
+$deadline = (Get-Date).AddMinutes($TimeBudgetMin)
+$cycle = 0
+$accepted = 0
+$rejected = 0
+$failed = 0
+$items = @()
+
+function Run-GatedLoop {
+  param([string]$Target)
+
+  $logStamp = Get-Date -Format "yyyyMMdd_HHmmss"
+  $glBase = "gated_loop_$logStamp"
+  $glOut  = Join-Path $logs "$glBase.out.log"
+  $glErr  = Join-Path $logs "$glBase.err.log"
+  $glLog  = Join-Path $logs "$glBase.log"
+
+  $argList = @(
+    "self_mod\gated_loop.py",
+    "--target", $Target,
+    "--population", $Population,
+    "--determinism", $Determinism,
+    "--bench-timeout", $BenchTimeoutSec,
+    "--pytest-timeout", $PytestTimeoutSec,
+    "--min-rate", $MinRate,
+    "--min-equal-rate-speedup", $EqualRateSpeedup
+  )
+  if ($MicroGate) { $argList += @("--micro-gate","--micro-speedup",$MicroSpeedup) }
+
+  $argStr = ($argList -join ' ')
+  "[$(Get-Date -Format s)] [Cycle $cycle] Running: python $argStr" | Tee-Object -FilePath $sessionLog -Append
+
+  # Start child and redirect to separate files
+  $proc = Start-Process -FilePath "python" -ArgumentList $argStr -NoNewWindow -PassThru `
+          -RedirectStandardOutput $glOut -RedirectStandardError $glErr
+
+  $start = Get-Date
+  $lastBeat = $start
+  $hardTimeout = $false
+
+  while (-not $proc.HasExited) {
+    Start-Sleep -Seconds 2
+    $now = Get-Date
+    if (($now - $lastBeat).TotalSeconds -ge 10) {
+      $elapsed = New-TimeSpan -Start $start -End $now
+      "[$(Get-Date -Format s)] [Cycle $cycle] heartbeat $("{0:hh\:mm\:ss}" -f $elapsed)" |
+        Tee-Object -FilePath $sessionLog -Append
+      $lastBeat = $now
+    }
+    if (($now - $start).TotalSeconds -ge $PerCycleHardLimitSec) {
+      "[$(Get-Date -Format s)] [Cycle $cycle] HARD TIMEOUT after $PerCycleHardLimitSec s → killing child" |
+        Tee-Object -FilePath $sessionLog -Append
+      try { $proc.CloseMainWindow() | Out-Null } catch {}
+      Start-Sleep -Seconds 2
+      try { $proc.Kill() } catch {}
+      $hardTimeout = $true
+      break
+    }
+  }
+
+  try { $proc.WaitForExit() } catch {}
+
+  $outText = (Test-Path $glOut) ? (Get-Content $glOut -Raw) : ""
+  $errText = (Test-Path $glErr) ? (Get-Content $glErr -Raw) : ""
+  ($outText + $errText) | Set-Content -Encoding UTF8 $glLog
+
+  $lines = ($outText + $errText)
+  $acceptedPatch = $lines -match "Candidate PASSED all gates" -or $lines -match "\[Applied\]"
+  $noChange = $lines -match "No-op/cosmetic change detected"
+  $pytestFail = $lines -match "\[Gate\] pytest failed"
+  $benchFail = $lines -match "\[Gate\] \[Bench\]"
+  $microFail = ($lines -match "\[Micro\]") -and ($lines -match "not fast enough|failed")
+
+  return [pscustomobject]@{
+    LogPath   = $glLog
+    Accepted  = $acceptedPatch
+    NoChange  = $noChange
+    Pytest    = $pytestFail
+    Bench     = $benchFail
+    Micro     = $microFail
+    HardFail  = $hardTimeout
+    ExitCode  = $proc.ExitCode
+  }
+}
+
+$targets = @("src\llm\planner_llm.py","src\llm\critic_llm.py","src\workspace_v1.py")
+
+while (($cycle -lt $Cycles) -and (Get-Date) -lt $deadline) {
+  $cycle++
+  foreach ($t in $targets) {
+    "[$(Get-Date -Format s)] [CI] --- Cycle $cycle on $t ---" | Tee-Object -FilePath $sessionLog -Append
+    $r = Run-GatedLoop -Target $t
+    $items += $r
+
+    if ($r.Accepted) { $accepted++ }
+    elseif ($r.NoChange) { $rejected++ }
+    else { $failed++ }
+
+    "[$(Get-Date -Format s)] [CI] result: accepted=$($r.Accepted) nochange=$($r.NoChange) pytest=$($r.Pytest) bench=$($r.Bench) micro=$($r.Micro) hardtimeout=$($r.HardFail) exit=$($r.ExitCode) log=$($r.LogPath)" |
+      Tee-Object -FilePath $sessionLog -Append
+
+    if ((Get-Date) -ge $deadline) { break }
+  }
+}
+
+$summary = @{
+  timestamp = $stamp
+  cycles    = $cycle
+  accepted  = $accepted
+  rejected  = $rejected
+  failed    = $failed
+  logs      = $items | ForEach-Object { $_.LogPath }
+}
+$summary | ConvertTo-Json -Depth 6 | Set-Content -Encoding UTF8 $sessionJson
+"[$(Get-Date -Format s)] [CI] Finished. Summary: $sessionJson" | Tee-Object -FilePath $sessionLog -Append
+Write-Host (@{summary_json=$sessionJson; session_log=$sessionLog} | ConvertTo-Json)

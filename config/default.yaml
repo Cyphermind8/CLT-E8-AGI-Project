@@ -1,0 +1,29 @@
+# FILE: config/default.yaml
+# Single source of truth to avoid spec drift.
+
+project:
+  name: CLT-E8-AGI
+  mode: smoke_v1
+  write_dirs: ["data", "reports", "runs"]
+  llm:
+    enabled: true          # <- OFF by default; turn true to use GPT-OSS assist
+    planner_temperature: 0.0
+    critic_temperature: 0.0
+    system_prompt: |
+      You are a precise planning and verification assistant. Prefer step-by-step,
+      tool-grounded actions; be terse, exact, and avoid speculation.
+
+metrics:
+  # Orthogonal metrics to avoid "metric illusions"
+  tracked: ["success", "steps", "latency_ms", "used_memory"]
+  success_required: true
+
+guardrails:
+  # Code is read-only by default; data-only writes
+  code_read_only: true
+  allow_network: false
+  allow_filesystem_writes_only_in: ["data", "reports", "runs"]
+
+smoke_task:
+  text: "Compute 21 + 21 using available tools, verify, and record the method."
+  expected_answer: 42

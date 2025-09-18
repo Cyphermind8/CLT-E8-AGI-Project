@@ -1,0 +1,58 @@
+✅ Step 1: Open Command Prompt (cmd) as Administrator
+1️⃣ Click Start Menu
+2️⃣ Type cmd
+3️⃣ Right-click → Run as Administrator
+
+✅ Step 2: Navigate to AI Project Directory
+cd C:\AI_Project
+
+✅ Step 3: Activate Virtual Environment
+venv-cu121\Scripts\activate
+
+✅ Expected Output:
+Your terminal should now show (venv-cu121) C:\AI_Project>
+
+✅ Step 4: Start FastAPI Server
+uvicorn api:app --host 127.0.0.1 --port 8000
+
+📌 Access API:
+
+Swagger UI: http://127.0.0.1:8000/docs
+
+🌐 For External Network Access (Allowing Other Devices to Connect)
+uvicorn 
+
+📌 Find Your Local IP:
+Run this to get your IP address:
+ipconfig
+Look for "IPv4 Address" (e.g., 192.168.1.100).
+Use this IP in your browser:
+
+http://192.168.1.100:8000/docs
+📌 If blocked: Open Windows Firewall and allow Uvicorn through.
+
+✅ Step 5: Verify API is Running
+Once the API is running, open:
+
+Local: http://127.0.0.1:8000/docs
+External: http://192.168.X.X:8000/docs
+
+✅ If Swagger UI loads, API is working!
+❌ If errors appear, let me know!
+
+🔥 Next Steps
+This startup process must be repeated every time after a restart.
+If you ever need this again, just ask: "Give me startup commands." 🚀🔥
+
+
+
+
+
+
+
+
+
+
+Search
+
+

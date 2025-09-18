@@ -1,0 +1,85 @@
+CLT–E8 Delivery Gate Addendum (v1.3)
+
+A. Zero-Defect Gate (mandatory for any code/shell):
+
+Internal rubric must score 10/10 on: Correctness, Reproducibility, Robustness, Clarity, Maintainability, Safety, Testability.
+
+FenceGuard on every file:
+
+No unterminated strings; ASCII-safe punctuation; file ends with \n.
+
+No soft line-wraps in string literals; max line length 120.
+
+Round-trip diff: rendered block equals source exactly.
+
+PS5-only shell: forbid CMD carets ^, forbid .ArgumentList; use single-string .Arguments.
+
+B. Preflight-before-run (automated in runner, but must be shipped with code):
+
+scripts/sanitize_workspace.ps1 quarantines:
+
+*_cand_*.py, files with Markdown fences, or “No changes required.”
+
+scripts/preflight.py compiles only real modules; CI must abort if preflight fails.
+
+C. Patch Discipline:
+
+Only single function-level replacement patches; no line-span edits; preserve decorators.
+
+Patch must AST-parse to exactly one function with the same name.
+
+Coherence + AST-delta gates remain; critic timeout fallback approves only tiny, safe edits.
+
+D. Dependencies:
+
+Prefer stdlib; if third-party needed, provide:
+
+Pin range (e.g., requests>=2.32,<3),
+
+One-line install,
+
+A stdlib fallback option.
+
+E. Delivery Protocol (unchanged but enforced):
+
+Full files only, one block per file with # FILE: path.
+
+Include smoke test / run steps, expected output, and rollback steps.
+
+Windows/PowerShell examples must be copy-pasta clean.
+
+F. Workspace Hygiene Policy:
+
+Never write “candidate” files into src/. If exploration produces drafts, route to scratch/ or quarantine/ outside import paths.
+
+What I commit to (you can hold me to this)
+
+10/10 or it doesn’t ship. If it touches CI, shell, or patching, I run my rubric to perfect and I include FenceGuard checks.
+
+Always ship sanitizer + preflight with any CI/tooling changes, and wire the runner to abort if preflight fails.
+
+Function-only patches with AST validation and decorator preservation. No line-span edits, ever.
+
+PS5-native commands only; I will never send CMD-style carets in PowerShell again.
+
+Minimal deps or stdlib fallback, with exact install commands if needed.
+
+Rollback lines included every time I ship a file that can alter state.
+
+The “trust-but-verify” checklist you’ll see on future drops
+
+I’ll prepend a short verification block like this before any code:
+
+Rubric: 10/10 (C,R,Rb,Cl,M,Sf,T all green)
+
+FenceGuard: strings/ASCII/EOL/line-length OK
+
+PS5 syntax: OK (no carets, single-string .Arguments)
+
+Sanitizer + preflight: included; runner aborts on fail
+
+Patch shape: function-level only; AST-valid; decorators preserved
+
+Deps: stdlib or pinned + one-line install
+
+Rollback: included

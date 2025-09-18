@@ -1,0 +1,12 @@
+{"name":"fib_20","prompt":"Return ONLY the 20th Fibonacci number as an integer (F(0)=0,F(1)=1).","check":{"type":"equals_int","expected":6765}}
+{"name":"json_uppercase","prompt":"Given JSON {\"a\":1,\"b\":2}, return ONLY JSON with keys uppercased and same values.","check":{"type":"json_keys","must_have":["A","B"],"must_not_have":["a","b"]}}
+{"name":"regex_total","prompt":"From the text 'Order #A-9921 total=$43.50', extract ONLY the total dollar amount as $43.50 (no extra text).","check":{"type":"regex","pattern":"^\\$?43\\.50$"}}
+{"name":"mul_21_34","prompt":"Answer ONLY the product of 21*34 as an integer.","check":{"type":"equals_int","expected":714}}
+{"name":"sum_big","prompt":"Answer ONLY the sum of 12345 + 67890 as an integer.","check":{"type":"equals_int","expected":80235}}
+{"name":"division","prompt":"Answer ONLY the integer result of 81/9.","check":{"type":"equals_int","expected":9}}
+{"name":"json_sort_values","prompt":"Given JSON {\"x\":[3,1,2]}, return ONLY JSON with the array sorted ascending.","check":{"type":"json_contains","must_contain":"{\"x\": [1, 2, 3]}"}}
+{"name":"extract_year","prompt":"From 'The event happened in 1999-07-15', return ONLY the 4-digit year.","check":{"type":"regex","pattern":"^1999$"}}
+{"name":"lowercase","prompt":"Return ONLY the lowercase version of 'HELLO_WORLD'.","check":{"type":"equals_str","expected":"hello_world"}}
+{"name":"reverse_digits","prompt":"Return ONLY the reverse of the digits '1200' (no quotes, no extra text).","check":{"type":"equals_str","expected":"0021"}}
+{"name":"json_merge","prompt":"Given JSON1={\"a\":1} and JSON2={\"b\":2}, return ONLY their merged JSON object.","check":{"type":"json_contains","must_contain":"{\"a\": 1, \"b\": 2}"}}
+{"name":"strict_bool","prompt":"Answer ONLY 'true' (lowercase) if 2+2==4, otherwise 'false'.","check":{"type":"equals_str","expected":"true"}}

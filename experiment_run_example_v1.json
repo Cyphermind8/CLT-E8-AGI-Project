@@ -1,0 +1,96 @@
+{
+  "run_id": "EXP_20250910_2130",
+  "date": "2025-09-10",
+  "setup": {
+    "code_version": "v0.1-alpha (no git)",
+    "config": {
+      "heads": 12,
+      "tanh_k": 1.2,
+      "coherence_weights": {
+        "d_entropy": 1.0,
+        "consistency": 1.2,
+        "contradictions": 1.5
+      }
+    },
+    "seeds": {
+      "global": 42,
+      "retrieval": 7
+    },
+    "dataset": "CSV_Demo",
+    "hardware": {
+      "cpu": "Ryzen 5800X",
+      "gpu": "RTX 3080 Ti",
+      "ram_gb": 64
+    },
+    "notes": "Dry run"
+  },
+  "metrics": {
+    "GC": {
+      "passed": 92,
+      "total": 100,
+      "pct": 92.0
+    },
+    "GfD": {
+      "passed": 0,
+      "total": 0,
+      "pct": 0.0
+    },
+    "MU": {
+      "delta_accuracy": 0.12,
+      "delta_latency": -0.24
+    },
+    "CH": {
+      "resolved": 7,
+      "injected": 10,
+      "pct": 70.0
+    },
+    "SRE": {
+      "recovered": 6,
+      "failures": 10,
+      "pct": 60.0
+    },
+    "CSC": {
+      "r": 0.63,
+      "p": 0.004
+    }
+  },
+  "ablation": {
+    "memory_mode": "multi_head",
+    "slip_rotations": true,
+    "tms_enabled": true,
+    "critic_enabled": true,
+    "world_model_enabled": false
+  },
+  "attempts": [
+    {
+      "task_id": "csv_rolling_z_001",
+      "hypothesis_id": "H1",
+      "mode": "full",
+      "coherence": {
+        "d_entropy": 0.22,
+        "consistency": 0.81,
+        "contradictions": 0.0,
+        "total": 1.18
+      },
+      "retrieval": {
+        "k": 5,
+        "supports_found": 3,
+        "supports_required": 3,
+        "heads_consensus": 0.78
+      },
+      "contradictions": 0,
+      "pass": true,
+      "error": "",
+      "timing_ms": 312.5,
+      "slipstate_ids": [
+        "b4f2...",
+        "19aa..."
+      ]
+    }
+  ],
+  "artifacts": {
+    "plots": [],
+    "logs_path": "experiment_logs/EXP_20250910_2130.json",
+    "config_snapshot_path": "config/default.yaml"
+  }
+}

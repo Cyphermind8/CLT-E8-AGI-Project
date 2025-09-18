@@ -1,0 +1,4 @@
+﻿# FILE: demo\hello.txt
+Hello from extractor!
+# FILE: demo\sub\hi.py
+print("hi from extractor")

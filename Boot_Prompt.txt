@@ -1,0 +1,8 @@
+Project: CLT-E8 AGI protocol.
+Load these rules for this session:
+- Always deliver full ready-to-paste files in one code block.
+- Use your private Self-Check Algorithm with rubric ≥9.5 before sharing code.
+- Provide step-by-step run instructions; no background/async claims.
+- If I say “Ultrathink”, switch to high-verbosity reasoning.
+
+If you can access files I upload, prioritize `/docs/MASTER_INSTRUCTIONS.md` and `/config/rubric.json`. Confirm you’ve loaded them and restate the delivery protocol before proceeding.

@@ -1,0 +1,260 @@
+{
+    "GitHub": [
+        {
+            "repo_name": "josephmisiti/awesome-machine-learning",
+            "description": "A curated list of awesome Machine Learning frameworks, libraries and software.",
+            "owner": "josephmisiti"
+        },
+        {
+            "repo_name": "wepe/MachineLearning",
+            "description": "Basic Machine Learning and Deep Learning",
+            "owner": "wepe"
+        },
+        {
+            "repo_name": "Jack-Cherish/Machine-Learning",
+            "description": ":zap:\u673a\u5668\u5b66\u4e60\u5b9e\u6218\uff08Python3\uff09\uff1akNN\u3001\u51b3\u7b56\u6811\u3001\u8d1d\u53f6\u65af\u3001\u903b\u8f91\u56de\u5f52\u3001SVM\u3001\u7ebf\u6027\u56de\u5f52\u3001\u6811\u56de\u5f52",
+            "owner": "Jack-Cherish"
+        },
+        {
+            "repo_name": "lawlite19/MachineLearning_Python",
+            "description": "\u673a\u5668\u5b66\u4e60\u7b97\u6cd5python\u5b9e\u73b0",
+            "owner": "lawlite19"
+        },
+        {
+            "repo_name": "udacity/machine-learning",
+            "description": "Content for Udacity's Machine Learning curriculum",
+            "owner": "udacity"
+        },
+        {
+            "repo_name": "Azure/MachineLearningNotebooks",
+            "description": "Python notebooks with ML and deep learning examples with Azure Machine Learning Python SDK | Microsoft",
+            "owner": "Azure"
+        },
+        {
+            "repo_name": "lazyprogrammer/machine_learning_examples",
+            "description": "A collection of machine learning examples and tutorials.",
+            "owner": "lazyprogrammer"
+        },
+        {
+            "repo_name": "trekhleb/homemade-machine-learning",
+            "description": "\ud83e\udd16 Python examples of popular machine learning algorithms with interactive Jupyter demos and math being explained",
+            "owner": "trekhleb"
+        },
+        {
+            "repo_name": "ujjwalkarn/Machine-Learning-Tutorials",
+            "description": "machine learning and deep learning tutorials, articles and other resources ",
+            "owner": "ujjwalkarn"
+        },
+        {
+            "repo_name": "ZuzooVn/machine-learning-for-software-engineers",
+            "description": "A complete daily plan for studying to become a machine learning engineer.",
+            "owner": "ZuzooVn"
+        },
+        {
+            "repo_name": "Vay-keen/Machine-learning-learning-notes",
+            "description": "\u5468\u5fd7\u534e\u300a\u673a\u5668\u5b66\u4e60\u300b\u53c8\u79f0\u897f\u74dc\u4e66\u662f\u4e00\u672c\u8f83\u4e3a\u5168\u9762\u7684\u4e66\u7c4d\uff0c\u4e66\u4e2d\u8be6\u7ec6\u4ecb\u7ecd\u4e86\u673a\u5668\u5b66\u4e60\u9886\u57df\u4e0d\u540c\u7c7b\u578b\u7684\u7b97\u6cd5(\u4f8b\u5982\uff1a\u76d1\u7763\u5b66\u4e60\u3001\u65e0\u76d1\u7763\u5b66\u4e60\u3001\u534a\u76d1\u7763\u5b66\u4e60\u3001\u5f3a\u5316\u5b66\u4e60\u3001\u96c6\u6210\u964d\u7ef4\u3001\u7279\u5f81\u9009\u62e9\u7b49)\uff0c\u8bb0\u5f55\u4e86\u672c\u4eba\u5728\u5b66\u4e60\u8fc7\u7a0b\u4e2d\u7684\u7406\u89e3\u601d\u8def\u4e0e\u6269\u5c55\u77e5\u8bc6\u70b9\uff0c\u5e0c\u671b\u5bf9\u65b0\u4eba\u9605\u8bfb\u897f\u74dc\u4e66\u6709\u6240\u5e2e\u52a9\uff01",
+            "owner": "Vay-keen"
+        },
+        {
+            "repo_name": "stefan-jansen/machine-learning-for-trading",
+            "description": "Code for Machine Learning for Algorithmic Trading, 2nd edition.",
+            "owner": "stefan-jansen"
+        },
+        {
+            "repo_name": "rasbt/python-machine-learning-book",
+            "description": "The \"Python Machine Learning (1st edition)\"  book code repository and info resource",
+            "owner": "rasbt"
+        },
+        {
+            "repo_name": "allmachinelearning/MachineLearning",
+            "description": "Machine learning resources",
+            "owner": "allmachinelearning"
+        },
+        {
+            "repo_name": "aladdinpersson/Machine-Learning-Collection",
+            "description": "A resource for learning about Machine learning & Deep Learning",
+            "owner": "aladdinpersson"
+        },
+        {
+            "repo_name": "DataTalksClub/machine-learning-zoomcamp",
+            "description": "Learn ML engineering for free in 4 months!",
+            "owner": "DataTalksClub"
+        },
+        {
+            "repo_name": "susanli2016/Machine-Learning-with-Python",
+            "description": "Python code for common Machine Learning Algorithms",
+            "owner": "susanli2016"
+        },
+        {
+            "repo_name": "afshinea/stanford-cs-229-machine-learning",
+            "description": "VIP cheatsheets for Stanford's CS 229 Machine Learning",
+            "owner": "afshinea"
+        },
+        {
+            "repo_name": "tensorflow/tensorflow",
+            "description": "An Open Source Machine Learning Framework for Everyone",
+            "owner": "tensorflow"
+        },
+        {
+            "repo_name": "EthicalML/awesome-production-machine-learning",
+            "description": "A curated list of awesome open source libraries to deploy, monitor, version and scale your machine learning",
+            "owner": "EthicalML"
+        },
+        {
+            "repo_name": "scikit-learn/scikit-learn",
+            "description": "scikit-learn: machine learning in Python",
+            "owner": "scikit-learn"
+        },
+        {
+            "repo_name": "trainindata/deploying-machine-learning-models",
+            "description": "Code for the online course \"Deployment of Machine Learning Models\"",
+            "owner": "trainindata"
+        },
+        {
+            "repo_name": "khangich/machine-learning-interview",
+            "description": "Machine Learning Interviews from FAANG, Snapchat, LinkedIn. I have offers from Snapchat, Coupang, Stitchfix etc. Blog: mlengineer.io.",
+            "owner": "khangich"
+        },
+        {
+            "repo_name": "roboticcam/machine-learning-notes",
+            "description": "My continuously updated Machine Learning, Probabilistic Models and Deep Learning notes and demos (2000+ slides)  \u6211\u4e0d\u95f4\u65ad\u66f4\u65b0\u7684\u673a\u5668\u5b66\u4e60\uff0c\u6982\u7387\u6a21\u578b\u548c\u6df1\u5ea6\u5b66\u4e60\u7684\u8bb2\u4e49(2000+\u9875)\u548c\u89c6\u9891\u94fe\u63a5",
+            "owner": "roboticcam"
+        },
+        {
+            "repo_name": "Fafa-DL/Lhy_Machine_Learning",
+            "description": "\u674e\u5b8f\u6bc52021/2022/2023\u6625\u5b63\u673a\u5668\u5b66\u4e60\u8bfe\u7a0b\u8bfe\u4ef6\u53ca\u4f5c\u4e1a",
+            "owner": "Fafa-DL"
+        },
+        {
+            "repo_name": "greyhatguy007/Machine-Learning-Specialization-Coursera",
+            "description": " Contains Solutions and Notes for the Machine Learning Specialization By Stanford University and Deeplearning.ai - Coursera (2022) by Prof. Andrew NG",
+            "owner": "greyhatguy007"
+        },
+        {
+            "repo_name": "jindongwang/MachineLearning",
+            "description": "\u4e00\u4e9b\u5173\u4e8e\u673a\u5668\u5b66\u4e60\u7684\u5b66\u4e60\u8d44\u6599\u4e0e\u7814\u7a76\u4ecb\u7ecd",
+            "owner": "jindongwang"
+        },
+        {
+            "repo_name": "dive-into-machine-learning/dive-into-machine-learning",
+            "description": "Free ways to dive into machine learning with Python and Jupyter Notebook. Notebooks, courses, and other links. (First posted in 2016.)",
+            "owner": "dive-into-machine-learning"
+        },
+        {
+            "repo_name": "firmai/financial-machine-learning",
+            "description": "A curated list of practical financial machine learning tools and applications.",
+            "owner": "firmai"
+        },
+        {
+            "repo_name": "timzhang642/3D-Machine-Learning",
+            "description": "A resource repository for 3D machine learning",
+            "owner": "timzhang642"
+        }
+    ],
+    "ArXiv": [
+        {
+            "title": "AI Thinking: A framework for rethinking artificial intelligence in\n  practice",
+            "summary": "  Artificial intelligence is transforming the way we work with information\nacross disciplines and practical contexts. A growing range of disciplines are\nnow involved in studying, developing, and assessing the use of AI in practice,\nbut these disciplines often employ conflicting understandings of what AI is and\nwhat is involved in its use. New, interdisciplinary approaches are needed to\nbridge competing conceptualisations of AI in practice and help shape the future\nof AI use. I propose a novel conceptual framework called AI Thinking, which\nmodels key decisions and considerations involved in AI use across disciplinary\nperspectives. The AI Thinking model addresses five practice-based competencies\ninvolved in applying AI in context: motivating AI use in information processes,\nformulating AI methods, assessing available tools and technologies, selecting\nappropriate data, and situating AI in the sociotechnical contexts it is used\nin. A hypothetical case study is provided to illustrate the application of AI\nThinking in practice. This article situates AI Thinking in broader\ncross-disciplinary discourses of AI, including its connections to ongoing\ndiscussions around AI literacy and AI-driven innovation. AI Thinking can help\nto bridge divides between academic disciplines and diverse contexts of AI use,\nand to reshape the future of AI in practice.\n",
+            "authors": [
+                "Denis Newman-Griffis"
+            ],
+            "published": "2024-08-26T04:41:21Z"
+        },
+        {
+            "title": "Intersymbolic AI: Interlinking Symbolic AI and Subsymbolic AI",
+            "summary": "  This perspective piece calls for the study of the new field of Intersymbolic\nAI, by which we mean the combination of symbolic AI, whose building blocks have\ninherent significance/meaning, with subsymbolic AI, whose entirety creates\nsignificance/effect despite the fact that individual building blocks escape\nmeaning. Canonical kinds of symbolic AI are logic, games and planning.\nCanonical kinds of subsymbolic AI are (un)supervised machine and reinforcement\nlearning. Intersymbolic AI interlinks the worlds of symbolic AI with its\ncompositional symbolic significance and meaning and of subsymbolic AI with its\nsummative significance or effect to enable culminations of insights from both\nworlds by going between and across symbolic AI insights with subsymbolic AI\ntechniques that are being helped by symbolic AI principles. For example,\nIntersymbolic AI may start with symbolic AI to understand a dynamic system,\ncontinue with subsymbolic AI to learn its control, and end with symbolic AI to\nsafely use the outcome of the learned subsymbolic AI controller in the dynamic\nsystem. The way Intersymbolic AI combines both symbolic and subsymbolic AI to\nincrease the effectiveness of AI compared to either kind of AI alone is likened\nto the way that the combination of both conscious and subconscious thought\nincreases the effectiveness of human thought compared to either kind of thought\nalone. Some successful contributions to the Intersymbolic AI paradigm are\nsurveyed here but many more are considered possible by advancing Intersymbolic\nAI.\n",
+            "authors": [
+                "Andr\u00e9 Platzer"
+            ],
+            "published": "2024-06-17T14:01:59Z"
+        },
+        {
+            "title": "Overconfident and Unconfident AI Hinder Human-AI Collaboration",
+            "summary": "  AI transparency is a central pillar of responsible AI deployment and\neffective human-AI collaboration. A critical approach is communicating\nuncertainty, such as displaying AI's confidence level, or its correctness\nlikelihood (CL), to users. However, these confidence levels are often\nuncalibrated, either overestimating or underestimating actual CL, posing risks\nand harms to human-AI collaboration. This study examines the effects of\nuncalibrated AI confidence on users' trust in AI, AI advice adoption, and\ncollaboration outcomes. We further examined the impact of increased\ntransparency, achieved through trust calibration support, on these outcomes.\nOur results reveal that uncalibrated AI confidence leads to both the misuse of\noverconfident AI and disuse of unconfident AI, thereby hindering outcomes of\nhuman-AI collaboration. Deficiency of trust calibration support exacerbates\nthis issue by making it harder to detect uncalibrated confidence, promoting\nmisuse and disuse of AI. Conversely, trust calibration support aids in\nrecognizing uncalibration and reducing misuse, but it also fosters distrust and\ncauses disuse of AI. Our findings highlight the importance of AI confidence\ncalibration for enhancing human-AI collaboration and suggest directions for AI\ndesign and regulation.\n",
+            "authors": [
+                "Jingshu Li",
+                "Yitian Yang",
+                "Renwen Zhang",
+                "Yi-chieh Lee"
+            ],
+            "published": "2024-02-12T13:16:30Z"
+        },
+        {
+            "title": "Supporting AI/ML Security Workers through an Adversarial Techniques,\n  Tools, and Common Knowledge (AI/ML ATT&CK) Framework",
+            "summary": "  This paper focuses on supporting AI/ML Security Workers -- professionals\ninvolved in the development and deployment of secure AI-enabled software\nsystems. It presents AI/ML Adversarial Techniques, Tools, and Common Knowledge\n(AI/ML ATT&CK) framework to enable AI/ML Security Workers intuitively to\nexplore offensive and defensive tactics.\n",
+            "authors": [
+                "Mohamad Fazelnia",
+                "Ahmet Okutan",
+                "Mehdi Mirakhorli"
+            ],
+            "published": "2022-11-09T18:07:10Z"
+        },
+        {
+            "title": "Navigating Fairness: Practitioners' Understanding, Challenges, and\n  Strategies in AI/ML Development",
+            "summary": "  The rise in the use of AI/ML applications across industries has sparked more\ndiscussions about the fairness of AI/ML in recent times. While prior research\non the fairness of AI/ML exists, there is a lack of empirical studies focused\non understanding the perspectives and experiences of AI practitioners in\ndeveloping a fair AI/ML system. Understanding AI practitioners' perspectives\nand experiences on the fairness of AI/ML systems are important because they are\ndirectly involved in its development and deployment and their insights can\noffer valuable real-world perspectives on the challenges associated with\nensuring fairness in AI/ML systems. We conducted semi-structured interviews\nwith 22 AI practitioners to investigate their understanding of what a 'fair\nAI/ML' is, the challenges they face in developing a fair AI/ML system, the\nconsequences of developing an unfair AI/ML system, and the strategies they\nemploy to ensure AI/ML system fairness. We developed a framework showcasing the\nrelationship between AI practitioners' understanding of 'fair AI/ML' system and\n(i) their challenges in its development, (ii) the consequences of developing an\nunfair AI/ML system, and (iii) strategies used to ensure AI/ML system fairness.\nBy exploring AI practitioners' perspectives and experiences, this study\nprovides actionable insights to enhance AI/ML fairness, which may promote\nfairer systems, reduce bias, and foster public trust in AI technologies.\nAdditionally, we also identify areas for further investigation and offer\nrecommendations to aid AI practitioners and AI companies in navigating\nfairness.\n",
+            "authors": [
+                "Aastha Pant",
+                "Rashina Hoda",
+                "Chakkrit Tantithamthavorn",
+                "Burak Turhan"
+            ],
+            "published": "2024-03-21T03:44:59Z"
+        },
+        {
+            "title": "\"Weak AI\" is Likely to Never Become \"Strong AI\", So What is its Greatest\n  Value for us?",
+            "summary": "  AI has surpassed humans across a variety of tasks such as image\nclassification, playing games (e.g., go, \"Starcraft\" and poker), and protein\nstructure prediction. However, at the same time, AI is also bearing serious\ncontroversies. Many researchers argue that little substantial progress has been\nmade for AI in recent decades. In this paper, the author (1) explains why\ncontroversies about AI exist; (2) discriminates two paradigms of AI research,\ntermed \"weak AI\" and \"strong AI\" (a.k.a. artificial general intelligence); (3)\nclarifies how to judge which paradigm a research work should be classified\ninto; (4) discusses what is the greatest value of \"weak AI\" if it has no chance\nto develop into \"strong AI\".\n",
+            "authors": [
+                "Bin Liu"
+            ],
+            "published": "2021-03-29T02:57:48Z"
+        },
+        {
+            "title": "A Bibliometric View of AI Ethics Development",
+            "summary": "  Artificial Intelligence (AI) Ethics is a nascent yet critical research field.\nRecent developments in generative AI and foundational models necessitate a\nrenewed look at the problem of AI Ethics. In this study, we perform a\nbibliometric analysis of AI Ethics literature for the last 20 years based on\nkeyword search. Our study reveals a three-phase development in AI Ethics,\nnamely an incubation phase, making AI human-like machines phase, and making AI\nhuman-centric machines phase. We conjecture that the next phase of AI ethics is\nlikely to focus on making AI more machine-like as AI matches or surpasses\nhumans intellectually, a term we coin as \"machine-like human\".\n",
+            "authors": [
+                "Di Kevin Gao",
+                "Andrew Haverly",
+                "Sudip Mittal",
+                "Jingdao Chen"
+            ],
+            "published": "2024-02-08T16:36:55Z"
+        },
+        {
+            "title": "Towards a Capability Assessment Model for the Comprehension and Adoption\n  of AI in Organisations",
+            "summary": "  The comprehension and adoption of Artificial Intelligence (AI) are beset with\npractical and ethical problems. This article presents a 5-level AI Capability\nAssessment Model (AI-CAM) and a related AI Capabilities Matrix (AI-CM) to\nassist practitioners in AI comprehension and adoption. These practical tools\nwere developed with business executives, technologists, and other\norganisational stakeholders in mind. They are founded on a comprehensive\nconception of AI compared to those in other AI adoption models and are also\nopen-source artefacts. Thus, the AI-CAM and AI-CM present an accessible\nresource to help inform organisational decision-makers on the capability\nrequirements for (1) AI-based data analytics use cases based on machine\nlearning technologies; (2) Knowledge representation to engineer and represent\ndata, information and knowledge using semantic technologies; and (3) AI-based\nsolutions that seek to emulate human reasoning and decision-making. The AI-CAM\ncovers the core capability dimensions (business, data, technology,\norganisation, AI skills, risks, and ethical considerations) required at the\nfive capability maturity levels to achieve optimal use of AI in organisations.\n",
+            "authors": [
+                " Butler",
+                " Tom",
+                " Espinoza-Lim\u00f3n",
+                " Angelina",
+                " Sepp\u00e4l\u00e4",
+                " Selja"
+            ],
+            "published": "2023-05-25T10:43:54Z"
+        },
+        {
+            "title": "Improving Health Professionals' Onboarding with AI and XAI for\n  Trustworthy Human-AI Collaborative Decision Making",
+            "summary": "  With advanced AI/ML, there has been growing research on explainable AI (XAI)\nand studies on how humans interact with AI and XAI for effective human-AI\ncollaborative decision-making. However, we still have a lack of understanding\nof how AI systems and XAI should be first presented to users without technical\nbackgrounds. In this paper, we present the findings of semi-structured\ninterviews with health professionals (n=12) and students (n=4) majoring in\nmedicine and health to study how to improve onboarding with AI and XAI. For the\ninterviews, we built upon human-AI interaction guidelines to create onboarding\nmaterials of an AI system for stroke rehabilitation assessment and AI\nexplanations and introduce them to the participants. Our findings reveal that\nbeyond presenting traditional performance metrics on AI, participants desired\nbenchmark information, the practical benefits of AI, and interaction trials to\nbetter contextualize AI performance, and refine the objectives and performance\nof AI. Based on these findings, we highlight directions for improving\nonboarding with AI and XAI and human-AI collaborative decision-making.\n",
+            "authors": [
+                "Min Hun Lee",
+                "Silvana Xin Yi Choo",
+                "Shamala D/O Thilarajah"
+            ],
+            "published": "2024-05-26T04:30:17Z"
+        },
+        {
+            "title": "AI-in-the-Loop -- The impact of HMI in AI-based Application",
+            "summary": "  Artificial intelligence (AI) and human-machine interaction (HMI) are two\nkeywords that usually do not fit embedded applications. Within the steps needed\nbefore applying AI to solve a specific task, HMI is usually missing during the\nAI architecture design and the training of an AI model. The human-in-the-loop\nconcept is prevalent in all other steps of developing AI, from data analysis\nvia data selection and cleaning to performance evaluation. During AI\narchitecture design, HMI can immediately highlight unproductive layers of the\narchitecture so that lightweight network architecture for embedded applications\ncan be created easily. We show that by using this HMI, users can instantly\ndistinguish which AI architecture should be trained and evaluated first since a\nhigh accuracy on the task could be expected. This approach reduces the\nresources needed for AI development by avoiding training and evaluating AI\narchitectures with unproductive layers and leads to lightweight AI\narchitectures. These resulting lightweight AI architectures will enable HMI\nwhile running the AI on an edge device. By enabling HMI during an AI uses\ninference, we will introduce the AI-in-the-loop concept that combines AI's and\nhumans' strengths. In our AI-in-the-loop approach, the AI remains the working\nhorse and primarily solves the task. If the AI is unsure whether its inference\nsolves the task correctly, it asks the user to use an appropriate HMI.\nConsequently, AI will become available in many applications soon since HMI will\nmake AI more reliable and explainable.\n",
+            "authors": [
+                "Julius Sch\u00f6ning",
+                "Clemens Westerkamp"
+            ],
+            "published": "2023-03-21T00:04:33Z"
+        }
+    ],
+    "Wikipedia": {
+        "title": "<span class=\"mw-page-title-main\">Artificial intelligence</span>",
+        "summary": "Artificial intelligence (AI) refers to the capability of computational systems to perform tasks typically associated with human intelligence, such as learning, reasoning, problem-solving, perception, and decision-making. It is a field of research in computer science that develops and studies methods and software that enable machines to perceive their environment and use learning and intelligence to take actions that maximize their chances of achieving defined goals. Such machines may be called AIs.",
+        "url": "https://en.wikipedia.org/wiki/Artificial_intelligence"
+    }
+}
