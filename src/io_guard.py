@@ -1,10 +1,9 @@
-Set-Content -Path .\src\io_guard.py -Encoding utf8 -Value @'
+# overwrite io_guard.py with valid Python (no BOM, UTF-8)
+$io = @'
 from __future__ import annotations
-import os, json
 from typing import Any
 from .governor import Governor, GovernorConfig
 
-# Singleton governor using env or current working dir
 _G = Governor(GovernorConfig.from_env())
 
 def write_text(path: str, text: str) -> None:
@@ -22,3 +21,4 @@ def copy_file(src: str, dst: str) -> None:
 def approved_targets() -> list[str]:
     return _G.approved_targets()
 '@
+Set-Content .\src\io_guard.py $io -Encoding utf8
