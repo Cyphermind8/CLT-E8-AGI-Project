@@ -1,102 +1,91 @@
-# FILE: src/tools/json_tools_v1.py
-"""
-JSON tool shims to remove brittleness from LLM prompts and stabilize benches.
-
-Exports (pure functions, deterministic):
-- sort_json_values(obj): recursively sort lists (by JSON-serialized value) and dict keys.
-- json_merge(left, right, mode): merge two JSON structures with clear conflict rules.
-
-Design principles
------------------
-• No third-party deps; consistent behavior across runs.
-• "JSON-only" thinking: avoid side effects, accept/return Python data that is JSON-safe.
-• Deterministic ordering via JSON dumps to ensure stable equality checks.
-"""
-
 from __future__ import annotations
-from typing import Any
-import json
+import os, io, json
+from dataclasses import dataclass
+from typing import Optional
 
-def _as_json_key(x: Any) -> str:
-    # Deterministic key for sorting heterogenous values
-    return json.dumps(x, sort_keys=True, ensure_ascii=False)
+DEFAULT_WRITE_ALLOW = [
+    "data","backup","reports","experiments","runs","logs","quarantine","temp",
+]
 
-def _sort_obj(x: Any) -> Any:
-    if isinstance(x, dict):
-        # Sort by key (string compare)
-        return {k: _sort_obj(v) for k, v in sorted(x.items(), key=lambda kv: kv[0])}
-    if isinstance(x, list):
-        # Sort each element after normalizing recursively, then sort by JSON form
-        normalized = [_sort_obj(e) for e in x]
-        return sorted(normalized, key=_as_json_key)
-    # primitive
-    return x
+@dataclass(frozen=True)
+class GovernorConfig:
+    project_root: str
+    write_allow: tuple[str, ...] = tuple(DEFAULT_WRITE_ALLOW)
+    dry_run: bool = False
 
-def sort_json_values(obj: Any) -> Any:
-    """
-    Recursively sort dict keys and list contents.
-    For lists, uses JSON-string form to compare across types deterministically.
-    """
-    return _sort_obj(obj)
+    @staticmethod
+    def from_env(project_root: Optional[str] = None) -> "GovernorConfig":
+        root = project_root or os.path.abspath(os.getenv("CLT_E8_PROJECT_ROOT", os.getcwd()))
+        allow = os.getenv("CLT_E8_WRITE_ALLOW", ",".join(DEFAULT_WRITE_ALLOW)).split(",")
+        allow = tuple(x.strip() for x in allow if x.strip())
+        dry = os.getenv("CLT_E8_DRY_RUN", "0").strip() in ("1","true","True")
+        return GovernorConfig(project_root=root, write_allow=allow, dry_run=dry)
 
-class MergeError(Exception):
-    pass
+class Governor:
+    def __init__(self, cfg: Optional[GovernorConfig] = None) -> None:
+        self.cfg = cfg or GovernorConfig.from_env()
 
-def _merge_values(a: Any, b: Any, mode: str) -> Any:
-    """Internal merge with three modes:
-       - 'prefer_right': right wins on conflicts
-       - 'prefer_left' : left wins on conflicts
-       - 'combine'     : attempt structural union (dict-deep-merge, list union unique by JSON)
-    """
-    if mode not in ("prefer_right", "prefer_left", "combine"):
-        raise MergeError(f"Unknown merge mode: {mode}")
+    def _norm(self, path: str) -> str:
+        return os.path.abspath(path)
 
-    # Dict x Dict => merge per mode
-    if isinstance(a, dict) and isinstance(b, dict):
-        keys = set(a) | set(b)
-        out = {}
-        for k in sorted(keys):
-            if k in a and k in b:
-                out[k] = _merge_values(a[k], b[k], mode)
-            elif k in a:
-                out[k] = a[k]
-            else:
-                out[k] = b[k]
-        return out
+    def _is_under(self, path: str, folder: str) -> bool:
+        path, folder = self._norm(path), self._norm(folder)
+        try:
+            common = os.path.commonpath([path, folder])
+        except ValueError:
+            return False
+        return common == folder
 
-    # List x List => union or prefer side
-    if isinstance(a, list) and isinstance(b, list):
-        if mode == "prefer_right":
-            return b
-        if mode == "prefer_left":
-            return a
-        # combine: union with deterministic order by JSON key
-        seen = set()
-        out = []
-        for item in a + b:
-            key = _as_json_key(item)
-            if key not in seen:
-                seen.add(key)
-                out.append(item)
-        return sorted((_sort_obj(e) for e in out), key=_as_json_key)
+    def is_write_allowed(self, path: str) -> bool:
+        apath = self._norm(path)
+        root  = self._norm(self.cfg.project_root)
+        if not self._is_under(apath, root):
+            return False
+        for sub in self.cfg.write_allow:
+            target = self._norm(os.path.join(root, sub))
+            if self._is_under(apath, target):
+                return True
+        return False
 
-    # Primitive clash: choose side or prefer_right default
-    if mode == "prefer_left":
-        return a
-    if mode == "prefer_right":
-        return b
-    # combine on primitives: if equal -> that value; else keep right (explicit rule)
-    return b if _as_json_key(a) != _as_json_key(b) else a
+    def ensure_parent(self, path: str) -> None:
+        parent = os.path.dirname(self._norm(path))
+        if parent and not os.path.isdir(parent):
+            if self.cfg.dry_run: return
+            os.makedirs(parent, exist_ok=True)
 
-def json_merge(left: Any, right: Any, mode: str = "combine") -> Any:
-    """
-    Merge two JSON-serializable Python values deterministically.
+    def write_text(self, path: str, text: str, encoding: str = "utf-8", bom: bool = False) -> None:
+        if not self.is_write_allowed(path):
+            raise PermissionError(f"Governor blocked write outside allowlist: {path}")
+        if self.cfg.dry_run: return
+        self.ensure_parent(path)
+        if bom:
+            with open(path, "wb") as f:
+                f.write(b"\xEF\xBB\xBF" + text.encode("utf-8"))
+            return
+        with io.open(path, "w", encoding=encoding, newline="\n") as f:
+            f.write(text)
 
-    Modes
-    -----
-    - prefer_right: right wins on conflicts
-    - prefer_left : left wins on conflicts
-    - combine     : dict-deep-merge; list union unique; primitive: right wins on difference
-    """
-    merged = _merge_values(left, right, mode)
-    return sort_json_values(merged)
+    def write_json(self, path: str, obj, sort_keys: bool = True, indent: int = 2) -> None:
+        payload = json.dumps(obj, ensure_ascii=False, sort_keys=sort_keys, indent=indent)
+        self.write_text(path, payload, encoding="utf-8", bom=False)
+
+    def append_text(self, path: str, text: str, encoding: str = "utf-8") -> None:
+        if not self.is_write_allowed(path):
+            raise PermissionError(f"Governor blocked append outside allowlist: {path}")
+        if self.cfg.dry_run: return
+        self.ensure_parent(path)
+        with io.open(path, "a", encoding=encoding, newline="\n") as f:
+            f.write(text)
+
+    def copy_file(self, src: str, dst: str) -> None:
+        if not os.path.isfile(src): raise FileNotFoundError(src)
+        if not self.is_write_allowed(dst):
+            raise PermissionError(f"Governor blocked copy outside allowlist: {dst}")
+        if self.cfg.dry_run: return
+        self.ensure_parent(dst)
+        with open(src, "rb") as r, open(dst, "wb") as w:
+            w.write(r.read())
+
+    def approved_targets(self) -> list[str]:
+        root = self._norm(self.cfg.project_root)
+        return [os.path.join(root, sub) for sub in self.cfg.write_allow]
