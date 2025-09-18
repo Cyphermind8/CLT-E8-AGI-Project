@@ -24,3 +24,13 @@ Thumbs.db
 
 # Secrets
 .env
+
+# === Reporting artifacts rules ===
+reports/*
+!reports/overnight/
+reports/overnight/*
+!reports/overnight/*.json
+!reports/overnight/*.md
+# Optional: keep logs out of version control
+reports/*.log
+runs/

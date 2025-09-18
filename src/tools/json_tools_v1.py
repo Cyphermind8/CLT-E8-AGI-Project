@@ -307,3 +307,91 @@ try:
 except NameError:
     pass
 # --- end mode synonym support ---
+# === CLT-E8 hardening for JSON tools (idempotent) ===
+try:
+    _TOOLBOX
+except NameError:
+    # If file layout changed, define toolbox safely
+    def sort_json_values(*, obj): 
+        return {"args":{"obj":obj},"tool":"json_sort_values"}
+    def json_merge(*, left, right, mode="combine"): 
+        return {"args":{"left":left,"right":right,"mode":mode},"tool":"json_merge"}
+    _TOOLBOX = {
+        "sort_json_values": sort_json_values,
+        "json_sort_values": sort_json_values,
+        "json_merge": json_merge,
+        "json_merge_values": json_merge,
+    }
+
+from inspect import signature
+from typing import Any
+import re
+
+_SYNONYMS = {
+    "obj":   {"obj","value","data","json","payload","content","key","x"},
+    "left":  {"left","a","lhs","l","x"},
+    "right": {"right","b","rhs","r","y"},
+    "mode":  {"mode","strategy","how","merge_mode","policy"},
+}
+
+def _normalize_mode_value(val):
+    if val is None: return "combine"
+    s = re.sub(r"[^a-z0-9]+","", str(val).strip().lower())
+    table = {
+        "preferb":"prefer_right","right":"prefer_right","r":"prefer_right",
+        "b":"prefer_right","rhs":"prefer_right","keepright":"prefer_right",
+        "takeright":"prefer_right","preferright":"prefer_right","second":"prefer_right","2":"prefer_right",
+        "prefera":"prefer_left","left":"prefer_left","l":"prefer_left",
+        "a":"prefer_left","lhs":"prefer_left","keepleft":"prefer_left",
+        "takeleft":"prefer_left","preferleft":"prefer_left","first":"prefer_left","1":"prefer_left",
+        "combine":"combine","union":"combine","merge":"combine","both":"combine","either":"combine","all":"combine",
+    }
+    return table.get(s, "combine")
+
+# Wrap json_merge to normalize mode safely if present
+_orig_json_merge = _TOOLBOX.get("json_merge")
+if _orig_json_merge is not None:
+    def _json_merge_wrapper(*, left=None, right=None, mode="combine"):
+        return _orig_json_merge(left=left, right=right, mode=_normalize_mode_value(mode))
+    _TOOLBOX["json_merge"] = _json_merge_wrapper
+
+def _normalize_kwargs(fn, args_dict: dict):
+    norm = dict(args_dict or {})
+    # Map synonyms per tool
+    if fn is _TOOLBOX["sort_json_values"]:
+        if "obj" not in norm:
+            for syn in _SYNONYMS["obj"]:
+                if syn in norm:
+                    norm["obj"] = norm.pop(syn); break
+        norm.pop("key", None)  # ignore stray keys that tool doesn't support
+
+    if fn is _TOOLBOX["json_merge"]:
+        if "left" not in norm:
+            for syn in _SYNONYMS["left"]:
+                if syn in norm: norm["left"] = norm.pop(syn); break
+        if "right" not in norm:
+            for syn in _SYNONYMS["right"]:
+                if syn in norm: norm["right"] = norm.pop(syn); break
+        if "mode" not in norm:
+            for syn in _SYNONYMS["mode"]:
+                if syn in norm: norm["mode"] = norm.pop(syn); break
+
+    # Keep only accepted parameters
+    params = set(signature(fn).parameters.keys())
+    return {k:v for k,v in norm.items() if k in params}
+
+def execute_call(spec: Any, args: Any = None):
+    if isinstance(spec, dict):
+        name = spec.get("tool") or spec.get("name")
+        call_args = spec.get("args") or {}
+    else:
+        name = spec
+        call_args = args or {}
+
+    fn = _TOOLBOX.get(name)
+    if fn is None:
+        raise ValueError(f"Unknown tool: {name!r}. Available: {sorted(_TOOLBOX.keys())}")
+
+    kwargs = _normalize_kwargs(fn, call_args)
+    return fn(**kwargs)
+# === end hardening ===
