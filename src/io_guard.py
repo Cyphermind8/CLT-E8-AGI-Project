@@ -1,5 +1,6 @@
-# overwrite io_guard.py with valid Python (no BOM, UTF-8)
-$io = @'
+Set-Location C:\AI_Project
+
+$purePython = @'
 from __future__ import annotations
 from typing import Any
 from .governor import Governor, GovernorConfig
@@ -21,4 +22,6 @@ def copy_file(src: str, dst: str) -> None:
 def approved_targets() -> list[str]:
     return _G.approved_targets()
 '@
-Set-Content .\src\io_guard.py $io -Encoding utf8
+
+# Hard overwrite with ONLY the Python above
+Set-Content .\src\io_guard.py $purePython -Encoding utf8
