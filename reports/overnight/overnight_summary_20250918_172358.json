@@ -1,0 +1,1352 @@
+{
+  "flaky_tests": [
+    "json_merge",
+    "json_sort_values"
+  ],
+  "generated_at": "20250918_172358",
+  "overall": {
+    "latency_avg_s_median": 4.154,
+    "rate_max": 1.0,
+    "rate_median": 1.0,
+    "rate_min": 0.833,
+    "runs_analyzed": 131
+  },
+  "recent_fail_examples": {
+    "json_merge": "got an unexpected keyword argument 'a'",
+    "json_sort_values": "got an unexpected keyword argument 'key'"
+  },
+  "runs": [
+    {
+      "avg_latency_s": 3.534,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_023511.json",
+      "mtime": 1758180911.447035,
+      "passed": 10,
+      "rate": 0.833,
+      "timestamp": "20250918_023511",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 3.47,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_023947.json",
+      "mtime": 1758181187.355384,
+      "passed": 10,
+      "rate": 0.833,
+      "timestamp": "20250918_023947",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 3.596,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_024330.json",
+      "mtime": 1758181410.5695395,
+      "passed": 11,
+      "rate": 0.917,
+      "timestamp": "20250918_024330",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 3.533,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_024701.json",
+      "mtime": 1758181621.2078807,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_024701",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 3.533,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_025514.json",
+      "mtime": 1758182114.6456468,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_025514",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 3.585,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_030142.json",
+      "mtime": 1758182502.2111814,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_030142",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.158,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_030823.json",
+      "mtime": 1758182903.6062903,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_030823",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.18,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_031505.json",
+      "mtime": 1758183305.5211635,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_031505",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.189,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_032147.json",
+      "mtime": 1758183707.6598914,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_032147",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.199,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_032830.json",
+      "mtime": 1758184110.0266151,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_032830",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.179,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_033511.json",
+      "mtime": 1758184511.9257774,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_033511",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.176,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_034153.json",
+      "mtime": 1758184913.7390194,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_034153",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.213,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_034836.json",
+      "mtime": 1758185316.4209275,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_034836",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.152,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_035517.json",
+      "mtime": 1758185717.5907955,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_035517",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.134,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_040158.json",
+      "mtime": 1758186118.3154788,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_040158",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.144,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_040839.json",
+      "mtime": 1758186519.3126447,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_040839",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.101,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_041519.json",
+      "mtime": 1758186919.2856672,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_041519",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.032,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_042157.json",
+      "mtime": 1758187317.58588,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_042157",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.114,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_042837.json",
+      "mtime": 1758187717.885185,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_042837",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.115,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_043518.json",
+      "mtime": 1758188118.1854064,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_043518",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.076,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_044157.json",
+      "mtime": 1758188517.555516,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_044157",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.127,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_044838.json",
+      "mtime": 1758188918.166665,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_044838",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.109,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_045518.json",
+      "mtime": 1758189318.320321,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_045518",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.142,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_050159.json",
+      "mtime": 1758189719.3180652,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_050159",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.084,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_050838.json",
+      "mtime": 1758190118.877645,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_050838",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.077,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_051518.json",
+      "mtime": 1758190518.2774923,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_051518",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.091,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_052158.json",
+      "mtime": 1758190918.007722,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_052158",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.126,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_052838.json",
+      "mtime": 1758191318.5750394,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_052838",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.127,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_053519.json",
+      "mtime": 1758191719.1584268,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_053519",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.077,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_054158.json",
+      "mtime": 1758192118.5682995,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_054158",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.139,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_054839.json",
+      "mtime": 1758192519.4536133,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_054839",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.115,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_055519.json",
+      "mtime": 1758192919.743187,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_055519",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.032,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_060158.json",
+      "mtime": 1758193318.063145,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_060158",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.111,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_060838.json",
+      "mtime": 1758193718.2780297,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_060838",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.081,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_061517.json",
+      "mtime": 1758194117.7717383,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_061517",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.124,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_062158.json",
+      "mtime": 1758194518.3101203,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_062158",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.13,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_062839.json",
+      "mtime": 1758194919.0996556,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_062839",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.153,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_063520.json",
+      "mtime": 1758195320.5717869,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_063520",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.129,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_064201.json",
+      "mtime": 1758195721.489562,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_064201",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.169,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_064843.json",
+      "mtime": 1758196123.334526,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_064843",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.18,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_065525.json",
+      "mtime": 1758196525.4814737,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_065525",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 3.428,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_072005.json",
+      "mtime": 1758198005.9232202,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_072005",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.334,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_072651.json",
+      "mtime": 1758198411.0493596,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_072651",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.35,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_073336.json",
+      "mtime": 1758198816.564327,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_073336",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.301,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_074020.json",
+      "mtime": 1758199220.6825547,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_074020",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.249,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_074703.json",
+      "mtime": 1758199623.5522726,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_074703",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.154,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_075344.json",
+      "mtime": 1758200024.129153,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_075344",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.228,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_080026.json",
+      "mtime": 1758200426.4452784,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_080026",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.185,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_080707.json",
+      "mtime": 1758200827.7140923,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_080707",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.21,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_081349.json",
+      "mtime": 1758201229.615883,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_081349",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.152,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_082030.json",
+      "mtime": 1758201630.1189468,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_082030",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.194,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_082711.json",
+      "mtime": 1758202031.65393,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_082711",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.137,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_083351.json",
+      "mtime": 1758202431.7889655,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_083351",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.166,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_084032.json",
+      "mtime": 1758202832.6487703,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_084032",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.143,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_084712.json",
+      "mtime": 1758203232.9289012,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_084712",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.21,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_085354.json",
+      "mtime": 1758203634.8137956,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_085354",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.186,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_090036.json",
+      "mtime": 1758204036.1286836,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_090036",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.161,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_090716.json",
+      "mtime": 1758204436.8696346,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_090716",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.217,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_091358.json",
+      "mtime": 1758204838.963814,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_091358",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.15,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_092039.json",
+      "mtime": 1758205239.4236126,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_092039",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.148,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_092719.json",
+      "mtime": 1758205639.8434825,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_092719",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.173,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_093400.json",
+      "mtime": 1758206040.8387134,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_093400",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.149,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_094041.json",
+      "mtime": 1758206441.2805119,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_094041",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.181,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_094722.json",
+      "mtime": 1758206842.460291,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_094722",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.172,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_095403.json",
+      "mtime": 1758207243.439124,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_095403",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.114,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_100043.json",
+      "mtime": 1758207643.0181537,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_100043",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.192,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_100724.json",
+      "mtime": 1758208044.523386,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_100724",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.102,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_101403.json",
+      "mtime": 1758208443.8131728,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_101403",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.208,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_102045.json",
+      "mtime": 1758208845.645396,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_102045",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.152,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_102726.json",
+      "mtime": 1758209246.153212,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_102726",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.167,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_103407.json",
+      "mtime": 1758209647.0166605,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_103407",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.151,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_104047.json",
+      "mtime": 1758210047.5179813,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_104047",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.08,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_104726.json",
+      "mtime": 1758210446.3178978,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_104726",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.162,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_105407.json",
+      "mtime": 1758210847.0542738,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_105407",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.172,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_110048.json",
+      "mtime": 1758211248.0176446,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_110048",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.171,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_110728.json",
+      "mtime": 1758211648.962186,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_110728",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.186,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_111410.json",
+      "mtime": 1758212050.2867799,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_111410",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.188,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_112051.json",
+      "mtime": 1758212451.6397984,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_112051",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.155,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_112732.json",
+      "mtime": 1758212852.1953912,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_112732",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.155,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_113412.json",
+      "mtime": 1758213252.790269,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_113412",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.154,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_114053.json",
+      "mtime": 1758213653.3699818,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_114053",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.174,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_114734.json",
+      "mtime": 1758214054.4024663,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_114734",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.174,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_115415.json",
+      "mtime": 1758214455.4376538,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_115415",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.114,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_120055.json",
+      "mtime": 1758214855.0276494,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_120055",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.157,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_120735.json",
+      "mtime": 1758215255.6624467,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_120735",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.185,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_121416.json",
+      "mtime": 1758215656.9778414,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_121416",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.175,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_122058.json",
+      "mtime": 1758216058.0374029,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_122058",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.167,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_122738.json",
+      "mtime": 1758216458.919197,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_122738",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.136,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_123419.json",
+      "mtime": 1758216859.035755,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_123419",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.148,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_124059.json",
+      "mtime": 1758217259.4629164,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_124059",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.147,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_124739.json",
+      "mtime": 1758217659.8619592,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_124739",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.136,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_125419.json",
+      "mtime": 1758218059.9772568,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_125419",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.117,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_130059.json",
+      "mtime": 1758218459.6520393,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_130059",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.143,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_130739.json",
+      "mtime": 1758218859.9421177,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_130739",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.151,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_131420.json",
+      "mtime": 1758219260.451835,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_131420",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.171,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_132101.json",
+      "mtime": 1758219661.4169402,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_132101",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.179,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_132742.json",
+      "mtime": 1758220062.5778835,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_132742",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.152,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_133423.json",
+      "mtime": 1758220463.0616367,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_133423",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.209,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_134104.json",
+      "mtime": 1758220864.937041,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_134104",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.157,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_134745.json",
+      "mtime": 1758221265.5617397,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_134745",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.215,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_135427.json",
+      "mtime": 1758221667.5836933,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_135427",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.193,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_140109.json",
+      "mtime": 1758222069.0786486,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_140109",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.145,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_140749.json",
+      "mtime": 1758222469.4066584,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_140749",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.186,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_141430.json",
+      "mtime": 1758222870.7367654,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_141430",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.148,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_142111.json",
+      "mtime": 1758223271.1364121,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_142111",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.204,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_142752.json",
+      "mtime": 1758223672.90346,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_142752",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.171,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_143433.json",
+      "mtime": 1758224073.9007025,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_143433",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.086,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_144112.json",
+      "mtime": 1758224472.8214421,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_144112",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.208,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_144754.json",
+      "mtime": 1758224874.6612387,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_144754",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.187,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_145435.json",
+      "mtime": 1758225275.9883497,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_145435",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.191,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_150117.json",
+      "mtime": 1758225677.4562294,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_150117",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.155,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_150758.json",
+      "mtime": 1758226078.0181093,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_150758",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.217,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_151440.json",
+      "mtime": 1758226480.0786285,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_151440",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.171,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_152121.json",
+      "mtime": 1758226881.0279448,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_152121",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.186,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_152802.json",
+      "mtime": 1758227282.3730557,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_152802",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.106,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_153441.json",
+      "mtime": 1758227681.7811995,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_153441",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.206,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_154123.json",
+      "mtime": 1758228083.5909762,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_154123",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.19,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_154805.json",
+      "mtime": 1758228485.0276542,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_154805",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.225,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_155447.json",
+      "mtime": 1758228887.265799,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_155447",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.186,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_160128.json",
+      "mtime": 1758229288.6029418,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_160128",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.135,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_160808.json",
+      "mtime": 1758229688.6680486,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_160808",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.141,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_161448.json",
+      "mtime": 1758230088.900956,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_161448",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.01,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_162125.json",
+      "mtime": 1758230485.9356372,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_162125",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.06,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_162804.json",
+      "mtime": 1758230884.260813,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_162804",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 3.947,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_163439.json",
+      "mtime": 1758231279.9012477,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_163439",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.064,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_164118.json",
+      "mtime": 1758231678.4801347,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_164118",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.241,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_164801.json",
+      "mtime": 1758232081.2954898,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_164801",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.207,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_165443.json",
+      "mtime": 1758232483.157521,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_165443",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.234,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_170125.json",
+      "mtime": 1758232885.6402032,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_170125",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 4.216,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_170807.json",
+      "mtime": 1758233287.7320023,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_170807",
+      "total": 12
+    },
+    {
+      "avg_latency_s": 3.484,
+      "determinism_ok": true,
+      "file": "C:\\AI_Project\\reports\\bench_20250918_171432.json",
+      "mtime": 1758233672.1475563,
+      "passed": 12,
+      "rate": 1.0,
+      "timestamp": "20250918_171432",
+      "total": 12
+    }
+  ],
+  "slow_tests_avg_latency": [
+    {
+      "avg_latency_s": 7.738,
+      "name": "fib_20"
+    },
+    {
+      "avg_latency_s": 7.669,
+      "name": "json_uppercase"
+    },
+    {
+      "avg_latency_s": 5.705,
+      "name": "reverse_digits"
+    },
+    {
+      "avg_latency_s": 4.429,
+      "name": "extract_year"
+    },
+    {
+      "avg_latency_s": 3.552,
+      "name": "json_sort_values"
+    }
+  ]
+}
