@@ -1,1 +1,0 @@
-print("This is a safe modification by ChatGPT!")

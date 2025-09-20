@@ -1,120 +1,195 @@
 # FILE: src/tools/json_tools_v1.py
-"""
-JSON tool shims to remove brittleness from LLM prompts and stabilize benches.
-
-Exports (pure functions, deterministic):
-- sort_json_values(obj): recursively sort lists (by JSON-serialized value) and dict keys.
-- json_merge(left, right, mode): merge two JSON structures with clear conflict rules.
-
-Design principles
------------------
-• No third-party deps; consistent behavior across runs.
-• "JSON-only" thinking: avoid side effects, accept/return Python data that is JSON-safe.
-• Deterministic ordering via JSON dumps to ensure stable equality checks.
-"""
+# UTF-8 (no BOM) — deterministic, stdlib-only helpers for JSON ops.
 
 from __future__ import annotations
-from typing import Any
+from typing import Any, Dict, List, Iterable
+from inspect import signature
 import json
+import re
+import copy
 
-def _as_json_key(x: Any) -> str:
-    # Deterministic key for sorting heterogenous values
-    return json.dumps(x, sort_keys=True, ensure_ascii=False)
+__all__ = [
+    "sort_json_values",        # recursive; sorts lists and orders dict keys alphabetically
+    "json_sort_values",        # legacy alias: optional key to sort a single field
+    "json_merge",              # combine / prefer_left / prefer_right
+    "execute_call",            # tolerant dispatcher
+]
 
-def _sort_obj(x: Any) -> Any:
-    if isinstance(x, dict):
-        # Sort by key (string compare)
-        return {k: _sort_obj(v) for k, v in sorted(x.items(), key=lambda kv: kv[0])}
-    if isinstance(x, list):
-        # Sort each element after normalizing recursively, then sort by JSON form
-        normalized = [_sort_obj(e) for e in x]
-        return sorted(normalized, key=_as_json_key)
-    # primitive
-    return x
+# -----------------------------
+# Small helpers
+# -----------------------------
+
+def _deepcopy_json(obj: Any) -> Any:
+    """Safe deep copy for JSON-like objects."""
+    return copy.deepcopy(obj)
+
+def _try_sort_list(lst: list) -> list:
+    """Sort if elements are mutually comparable; otherwise keep original order."""
+    try:
+        return sorted(lst)
+    except TypeError:
+        return list(lst)
+
+def _normalize_mode_value(val: Any) -> str:
+    """
+    Normalize merge policy to one of: 'combine', 'prefer_left', 'prefer_right'.
+    Accepts direct values and a wide set of synonyms.
+    """
+    if val is None:
+        return "combine"
+    s_raw = str(val).strip()
+    # Accept canonical strings as-is
+    if s_raw in {"combine", "prefer_left", "prefer_right"}:
+        return s_raw
+    # Normalize noisy variants
+    s = re.sub(r"[^a-z0-9]+", "", s_raw.lower())
+    table = {
+        # prefer right
+        "preferright": "prefer_right", "right": "prefer_right", "r": "prefer_right",
+        "b": "prefer_right", "rhs": "prefer_right", "2": "prefer_right",
+        # prefer left
+        "preferleft": "prefer_left", "left": "prefer_left", "l": "prefer_left",
+        "a": "prefer_left", "lhs": "prefer_left", "1": "prefer_left",
+        # combine/union
+        "combine": "combine", "union": "combine", "merge": "combine",
+        "both": "combine", "either": "combine", "all": "combine",
+        # fallbacks
+        "": "combine",
+    }
+    return table.get(s, "combine")
+
+def _unique_preserve_order(seq: Iterable[Any]) -> List[Any]:
+    """Return a list with first-occurrence order preserved (by JSON-serialized identity)."""
+    seen = set()
+    out: List[Any] = []
+    for x in seq:
+        k = json.dumps(x, sort_keys=True, ensure_ascii=False)
+        if k in seen:
+            continue
+        seen.add(k)
+        out.append(x)
+    return out
+
+# -----------------------------
+# Public API
+# -----------------------------
 
 def sort_json_values(obj: Any) -> Any:
     """
-    Recursively sort dict keys and list contents.
-    For lists, uses JSON-string form to compare across types deterministically.
+    Recursively traverse a JSON-like structure:
+      - Sort any lists encountered (if elements are comparable).
+      - Return dicts with **keys in alphabetical order** (values processed recursively).
+    Scalars are returned unchanged.
     """
-    return _sort_obj(obj)
+    if isinstance(obj, list):
+        rec = [sort_json_values(v) for v in obj]
+        return _try_sort_list(rec)
+    if isinstance(obj, dict):
+        # Recurse into values and rebuild dict with sorted keys
+        keys = sorted(obj.keys())
+        out: Dict[str, Any] = {}
+        for k in keys:
+            out[k] = sort_json_values(obj[k])
+        return out
+    return _deepcopy_json(obj)
 
-class MergeError(Exception):
-    pass
-
-def _merge_values(a: Any, b: Any, mode: str) -> Any:
-    """Internal merge with three modes:
-       - 'prefer_right': right wins on conflicts
-       - 'prefer_left' : left wins on conflicts
-       - 'combine'     : attempt structural union (dict-deep-merge, list union unique by JSON)
+def json_sort_values(obj: Dict[str, Any], key: str | None = None) -> Dict[str, Any]:
     """
-    if mode not in ("prefer_right", "prefer_left", "combine"):
-        raise MergeError(f"Unknown merge mode: {mode}")
+    Back-compat alias:
+      - If key is provided: only sort obj[key] when it is a list (non-destructive to other fields).
+      - If key is None: behave like recursive sort_json_values(obj).
+    """
+    if key is None:
+      return sort_json_values(obj)
+    result = _deepcopy_json(obj)
+    if isinstance(result, dict) and key in result and isinstance(result[key], list):
+        result[key] = _try_sort_list(result[key])
+    return result
 
-    # Dict x Dict => merge per mode
-    if isinstance(a, dict) and isinstance(b, dict):
-        keys = set(a) | set(b)
-        out = {}
-        for k in sorted(keys):
-            if k in a and k in b:
-                out[k] = _merge_values(a[k], b[k], mode)
-            elif k in a:
-                out[k] = a[k]
+def json_merge(left: Any, right: Any, mode: str | None = "combine") -> Any:
+    """
+    Merge two JSON-like structures with one of three policies:
+
+    - combine (default):
+        * dict: recursive combine by key
+        * list: union with first-occurrence order
+        * scalar mismatch: choose right if not None, else left
+    - prefer_left:
+        * dict/list/scalar: choose left if present, else right
+    - prefer_right:
+        * dict/list/scalar: choose right if present, else left
+    """
+    policy = _normalize_mode_value(mode)
+
+    if policy == "prefer_left":
+        return _deepcopy_json(left) if left is not None else _deepcopy_json(right)
+    if policy == "prefer_right":
+        return _deepcopy_json(right) if right is not None else _deepcopy_json(left)
+
+    # combine policy
+    if isinstance(left, dict) and isinstance(right, dict):
+        out: Dict[str, Any] = {}
+        keys = set(left.keys()) | set(right.keys())
+        for k in keys:
+            if k in left and k in right:
+                out[k] = json_merge(left[k], right[k], mode="combine")
+            elif k in left:
+                out[k] = _deepcopy_json(left[k])
             else:
-                out[k] = b[k]
+                out[k] = _deepcopy_json(right[k])
         return out
 
-    # List x List => union or prefer side
-    if isinstance(a, list) and isinstance(b, list):
-        if mode == "prefer_right":
-            return b
-        if mode == "prefer_left":
-            return a
-        # combine: union with deterministic order by JSON key
-        seen = set()
-        out = []
-        for item in a + b:
-            key = _as_json_key(item)
-            if key not in seen:
-                seen.add(key)
-                out.append(item)
-        return sorted((_sort_obj(e) for e in out), key=_as_json_key)
+    if isinstance(left, list) and isinstance(right, list):
+        return _unique_preserve_order([*_deepcopy_json(left), *_deepcopy_json(right)])
 
-    # Primitive clash: choose side or prefer_right default
-    if mode == "prefer_left":
-        return a
-    if mode == "prefer_right":
-        return b
-    # combine on primitives: if equal -> that value; else keep right (explicit rule)
-    return b if _as_json_key(a) != _as_json_key(b) else a
+    # Mismatched or scalar types under "combine": prefer the more defined value.
+    return _deepcopy_json(right) if right is not None else _deepcopy_json(left)
 
-def json_merge(left: Any, right: Any, mode: str = "combine") -> Any:
-    """
-    Merge two JSON-serializable Python values deterministically.
-
-    Modes
-    -----
-    - prefer_right: right wins on conflicts
-    - prefer_left : left wins on conflicts
-    - combine     : dict-deep-merge; list union unique; primitive: right wins on difference
-    """
-    merged = _merge_values(left, right, mode)
-    return sort_json_values(merged)
-# --- bench compatibility: flexible dispatcher ---
-from typing import Any
+# -----------------------------
+# Minimal tool dispatcher (tolerant)
+# -----------------------------
 
 _TOOLBOX = {
     "sort_json_values": sort_json_values,
-    "json_sort_values": sort_json_values,  # alias
+    "json_sort_values": json_sort_values,
     "json_merge": json_merge,
-    "json_merge_values": json_merge,       # alias
 }
+
+# Loose synonyms for kwargs we’ve seen in the wild.
+_SYN_KW = {
+    "obj":   {"obj", "value", "data", "json", "payload", "content"},
+    "left":  {"left", "a", "lhs", "l", "x"},
+    "right": {"right", "b", "rhs", "r", "y"},
+    "mode":  {"mode", "strategy", "how", "merge_mode", "policy"},
+    "key":   {"key", "path", "field", "name"},
+}
+
+def _normalize_kwargs(fn, args_dict: dict) -> dict:
+    """Map common synonym keys to the function’s real parameters and drop unknowns."""
+    norm = dict(args_dict or {})
+    params = set(signature(fn).parameters.keys())
+
+    def _fill(canon: str):
+        if canon in params and canon not in norm:
+            for syn in _SYN_KW[canon]:
+                if syn in norm:
+                    norm[canon] = norm.pop(syn)
+                    break
+
+    _fill("obj")
+    _fill("left")
+    _fill("right")
+    _fill("mode")
+    _fill("key")
+
+    # Drop unknown kwargs (tolerant)
+    return {k: v for k, v in norm.items() if k in params}
 
 def execute_call(spec: Any, args: Any = None) -> Any:
     """
-    Accepts either:
-      - execute_call({"tool": "json_merge", "args": {...}})
-      - execute_call("json_merge", {"left":..., "right":..., "mode":"combine"})
+    Uniform entrypoint:
+      execute_call("json_merge", {"left": {...}, "right": {...}, "mode": "combine"})
+      execute_call({"tool": "sort_json_values", "args": {"obj": {...}}})
     """
     if isinstance(spec, dict):
         name = spec.get("tool") or spec.get("name")
@@ -127,271 +202,31 @@ def execute_call(spec: Any, args: Any = None) -> Any:
     if fn is None:
         raise ValueError(f"Unknown tool: {name!r}. Available: {sorted(_TOOLBOX.keys())}")
 
-    if not isinstance(call_args, dict):
-        raise TypeError("args must be a dict of keyword arguments")
-
-    import inspect
-    sig = inspect.signature(fn)
-    bound = sig.bind_partial(**call_args)
-    return fn(*bound.args, **bound.kwargs)
-# --- end dispatcher ---
-# --- improved bench dispatcher (overrides earlier execute_call) ---
-from inspect import signature
-from typing import Any
-
-# keep the existing toolbox
-try:
-    _TOOLBOX
-except NameError:  # safety if file layout changes
-    _TOOLBOX = {
-        "sort_json_values": sort_json_values,
-        "json_sort_values": sort_json_values,  # alias
-        "json_merge": json_merge,
-        "json_merge_values": json_merge,       # alias
-    }
-
-_SYNONYMS = {
-    "obj":   {"obj","value","data","json","payload","content","key","x"},
-    "left":  {"left","a","lhs","l","x"},
-    "right": {"right","b","rhs","r","y"},
-    "mode":  {"mode","strategy","how","merge_mode"},
-}
-
-def _normalize_args(fn, args_dict: dict):
-    if not isinstance(args_dict, dict):
-        raise TypeError("args must be a dict")
-
-    params = [p for p in signature(fn).parameters.values()
-              if p.kind in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD)]
-
-    # If function takes 1 param and a single kw is provided, accept it positionally
-    if len(params) == 1 and len(args_dict) == 1:
-        return (next(iter(args_dict.values())), {})
-
-    # Map common synonyms
-    norm = dict(args_dict)
-    if fn is _TOOLBOX["sort_json_values"]:
-        if "obj" not in norm:
-            for syn in _SYNONYMS["obj"]:
-                if syn in norm:
-                    norm["obj"] = norm.pop(syn); break
-
-    if fn is _TOOLBOX["json_merge"]:
-        if "left" not in norm:
-            for syn in _SYNONYMS["left"]:
-                if syn in norm:
-                    norm["left"] = norm.pop(syn); break
-        if "right" not in norm:
-            for syn in _SYNONYMS["right"]:
-                if syn in norm:
-                    norm["right"] = norm.pop(syn); break
-        if "mode" not in norm:
-            for syn in _SYNONYMS["mode"]:
-                if syn in norm:
-                    norm["mode"] = norm.pop(syn); break
-    return (), norm
-
-def execute_call(spec: Any, args: Any = None):
-    if isinstance(spec, dict):
-        name = spec.get("tool") or spec.get("name")
-        call_args = spec.get("args") or {}
-    else:
-        name = spec
-        call_args = args or {}
-
-    fn = _TOOLBOX.get(name)
-    if fn is None:
-        raise ValueError(f"Unknown tool: {name!r}. Available: {sorted(_TOOLBOX.keys())}")
-
-    pos, kwargs = _normalize_args(fn, call_args)
-    return fn(*pos, **kwargs)
-# --- end improved dispatcher ---
-# --- execute_call V2: tolerant arg-mapping + ignore unknown kwargs ---
-from inspect import signature
-from typing import Any
-
-try:
-    _TOOLBOX
-except NameError:
-    _TOOLBOX = {
-        "sort_json_values": sort_json_values,
-        "json_sort_values": sort_json_values,
-        "json_merge": json_merge,
-        "json_merge_values": json_merge,
-    }
-
-_SYNONYMS = {
-    "obj":   {"obj","value","data","json","payload","content","key","x"},
-    "left":  {"left","a","lhs","l","x"},
-    "right": {"right","b","rhs","r","y"},
-    "mode":  {"mode","strategy","how","merge_mode","policy"},  # include 'policy'
-}
-
-def _normalize_kwargs(fn, args_dict: dict):
-    norm = dict(args_dict or {})
-
-    # Map common synonyms
-    if fn is _TOOLBOX["sort_json_values"]:
-        if "obj" not in norm:
-            for syn in _SYNONYMS["obj"]:
-                if syn in norm:
-                    norm["obj"] = norm.pop(syn); break
-        # ignore noise keys (e.g., 'key' from some benches)
-        norm.pop("key", None)
-
-    if fn is _TOOLBOX["json_merge"]:
-        if "left" not in norm:
-            for syn in _SYNONYMS["left"]:
-                if syn in norm:
-                    norm["left"] = norm.pop(syn); break
-        if "right" not in norm:
-            for syn in _SYNONYMS["right"]:
-                if syn in norm:
-                    norm["right"] = norm.pop(syn); break
-        if "mode" not in norm:
-            for syn in _SYNONYMS["mode"]:
-                if syn in norm:
-                    norm["mode"] = norm.pop(syn); break
-
-    # Keep only params the function actually accepts
-    params = set(signature(fn).parameters.keys())
-    norm = {k: v for k, v in norm.items() if k in params}
-    return norm
-
-def execute_call(spec: Any, args: Any = None):
-    if isinstance(spec, dict):
-        name = spec.get("tool") or spec.get("name")
-        call_args = spec.get("args") or {}
-    else:
-        name = spec
-        call_args = args or {}
-
-    fn = _TOOLBOX.get(name)
-    if fn is None:
-        raise ValueError(f"Unknown tool: {name!r}. Available: {sorted(_TOOLBOX.keys())}")
-
     kwargs = _normalize_kwargs(fn, call_args)
+    if "mode" in kwargs:
+        kwargs["mode"] = _normalize_mode_value(kwargs["mode"])
     return fn(**kwargs)
-# --- end execute_call V2 ---
-# --- mode synonym support for json_merge ---
-import re
 
-def _normalize_mode_value(val):
-    if val is None:
-        return "combine"
-    s = str(val).strip().lower()
-    s = re.sub(r"[^a-z0-9]+", "", s)  # e.g., "prefer_b" -> "preferb"
-    table = {
-        # right / B side
-        "preferb":"prefer_right","right":"prefer_right","r":"prefer_right",
-        "b":"prefer_right","rhs":"prefer_right","keepright":"prefer_right",
-        "takeright":"prefer_right","preferright":"prefer_right","second":"prefer_right","2":"prefer_right",
-        # left / A side
-        "prefera":"prefer_left","left":"prefer_left","l":"prefer_left",
-        "a":"prefer_left","lhs":"prefer_left","keepleft":"prefer_left",
-        "takeleft":"prefer_left","preferleft":"prefer_left","first":"prefer_left","1":"prefer_left",
-        # union/merge
-        "combine":"combine","union":"combine","merge":"combine",
-        "both":"combine","either":"combine","all":"combine",
-    }
-    return table.get(s, "combine")
+# -----------------------------
+# CLI smoke (optional)
+# -----------------------------
 
-# If toolbox exists, wrap json_merge to normalize 'mode' value
-try:
-    _TOOLBOX
-    _orig_json_merge = _TOOLBOX.get("json_merge")
-    if _orig_json_merge is not None:
-        def _json_merge_wrapper(*, left=None, right=None, mode="combine"):
-            return _orig_json_merge(left=left, right=right, mode=_normalize_mode_value(mode))
-        _TOOLBOX["json_merge"] = _json_merge_wrapper
-except NameError:
-    pass
-# --- end mode synonym support ---
-# === CLT-E8 hardening for JSON tools (idempotent) ===
-try:
-    _TOOLBOX
-except NameError:
-    # If file layout changed, define toolbox safely
-    def sort_json_values(*, obj): 
-        return {"args":{"obj":obj},"tool":"json_sort_values"}
-    def json_merge(*, left, right, mode="combine"): 
-        return {"args":{"left":left,"right":right,"mode":mode},"tool":"json_merge"}
-    _TOOLBOX = {
-        "sort_json_values": sort_json_values,
-        "json_sort_values": sort_json_values,
-        "json_merge": json_merge,
-        "json_merge_values": json_merge,
-    }
+def _print_json(x: Any) -> None:
+    print(json.dumps(x, ensure_ascii=False, sort_keys=True))
 
-from inspect import signature
-from typing import Any
-import re
-
-_SYNONYMS = {
-    "obj":   {"obj","value","data","json","payload","content","key","x"},
-    "left":  {"left","a","lhs","l","x"},
-    "right": {"right","b","rhs","r","y"},
-    "mode":  {"mode","strategy","how","merge_mode","policy"},
-}
-
-def _normalize_mode_value(val):
-    if val is None: return "combine"
-    s = re.sub(r"[^a-z0-9]+","", str(val).strip().lower())
-    table = {
-        "preferb":"prefer_right","right":"prefer_right","r":"prefer_right",
-        "b":"prefer_right","rhs":"prefer_right","keepright":"prefer_right",
-        "takeright":"prefer_right","preferright":"prefer_right","second":"prefer_right","2":"prefer_right",
-        "prefera":"prefer_left","left":"prefer_left","l":"prefer_left",
-        "a":"prefer_left","lhs":"prefer_left","keepleft":"prefer_left",
-        "takeleft":"prefer_left","preferleft":"prefer_left","first":"prefer_left","1":"prefer_left",
-        "combine":"combine","union":"combine","merge":"combine","both":"combine","either":"combine","all":"combine",
-    }
-    return table.get(s, "combine")
-
-# Wrap json_merge to normalize mode safely if present
-_orig_json_merge = _TOOLBOX.get("json_merge")
-if _orig_json_merge is not None:
-    def _json_merge_wrapper(*, left=None, right=None, mode="combine"):
-        return _orig_json_merge(left=left, right=right, mode=_normalize_mode_value(mode))
-    _TOOLBOX["json_merge"] = _json_merge_wrapper
-
-def _normalize_kwargs(fn, args_dict: dict):
-    norm = dict(args_dict or {})
-    # Map synonyms per tool
-    if fn is _TOOLBOX["sort_json_values"]:
-        if "obj" not in norm:
-            for syn in _SYNONYMS["obj"]:
-                if syn in norm:
-                    norm["obj"] = norm.pop(syn); break
-        norm.pop("key", None)  # ignore stray keys that tool doesn't support
-
-    if fn is _TOOLBOX["json_merge"]:
-        if "left" not in norm:
-            for syn in _SYNONYMS["left"]:
-                if syn in norm: norm["left"] = norm.pop(syn); break
-        if "right" not in norm:
-            for syn in _SYNONYMS["right"]:
-                if syn in norm: norm["right"] = norm.pop(syn); break
-        if "mode" not in norm:
-            for syn in _SYNONYMS["mode"]:
-                if syn in norm: norm["mode"] = norm.pop(syn); break
-
-    # Keep only accepted parameters
-    params = set(signature(fn).parameters.keys())
-    return {k:v for k,v in norm.items() if k in params}
-
-def execute_call(spec: Any, args: Any = None):
-    if isinstance(spec, dict):
-        name = spec.get("tool") or spec.get("name")
-        call_args = spec.get("args") or {}
-    else:
-        name = spec
-        call_args = args or {}
-
-    fn = _TOOLBOX.get(name)
-    if fn is None:
-        raise ValueError(f"Unknown tool: {name!r}. Available: {sorted(_TOOLBOX.keys())}")
-
-    kwargs = _normalize_kwargs(fn, call_args)
-    return fn(**kwargs)
-# === end hardening ===
+if __name__ == "__main__":
+    import sys
+    argv = sys.argv[1:]
+    if not argv:
+        sys.exit(0)
+    try:
+        if len(argv) == 1:
+            obj = json.loads(argv[0])
+            _print_json(sort_json_values(obj))
+        else:
+            left = json.loads(argv[0]); right = json.loads(argv[1])
+            mode = argv[2] if len(argv) > 2 else "combine"
+            _print_json(json_merge(left, right, mode=mode))
+    except Exception as e:
+        print(f"error: {e}", file=sys.stderr)
+        sys.exit(2)

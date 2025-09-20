@@ -1,0 +1,101 @@
+# FILE: ai_core.py
+"""CLT–E8 AGI • AICore (v2) — schema-aligned, deterministic, stdlib-only.
+
+Modification schema (single source of truth):
+{
+  "timestamp": ISO8601 Z,
+  "file": str,          # target file path
+  "before": str,        # original code
+  "after": str,         # proposed code
+  "rationale": str,     # brief safety/benefit rationale
+  "perf_gain": float    # measured or assumed gain; default 0.0
+}
+"""
+
+from __future__ import annotations
+import json, time, os
+from typing import Dict, Any
+
+MEMORY_PATH = "ai_memory.json"
+PERF_LOG_PATH = "ai_performance_log.json"
+
+def _utc_now() -> str:
+    return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+
+def _load_json(path: str, default: Dict[str, Any]) -> Dict[str, Any]:
+    if not os.path.exists(path):
+        return json.loads(json.dumps(default))
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            if not isinstance(data, dict):
+                raise ValueError("memory root must be an object")
+            return data
+    except Exception:
+        # quarantine corrupt file
+        ts = time.strftime("%Y%m%d_%H%M%S")
+        qdir = os.path.join("backup")
+        os.makedirs(qdir, exist_ok=True)
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                raw = f.read()
+            with open(os.path.join(qdir, f"corrupt_{os.path.basename(path)}_{ts}.json"),
+                      "w", encoding="utf-8") as o:
+                o.write(raw)
+        except Exception:
+            pass
+        return json.loads(json.dumps(default))
+
+def _save_json(path: str, obj: Dict[str, Any]) -> None:
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(obj, f, indent=2, sort_keys=True)
+        f.write("\n")
+
+class AICore:
+    """Lightweight core that proposes safe, minimal edits and logs them in a unified schema."""
+
+    def __init__(self, memory_path: str = MEMORY_PATH, perf_path: str = PERF_LOG_PATH):
+        self.memory_path = memory_path
+        self.perf_path = perf_path
+        self.memory = _load_json(self.memory_path, {"modifications": [], "decisions": []})
+
+    def improve_file(self, file_path: str) -> Dict[str, Any]:
+        """Return a schema-aligned modification proposal for `file_path` (no write)."""
+        with open(file_path, "r", encoding="utf-8") as f:
+            before = f.read()
+
+        # Deterministic placeholder: add/normalize a header docstring if missing.
+        # This keeps CI edits tiny & safe under AST-delta.
+        header = '""" Auto-added module docstring (CLT–E8 gated loop). """\n'
+        if before.lstrip().startswith('"""'):
+            after = before  # already has a docstring; no-op proposal
+            rationale = "Docstring present; no change required."
+        else:
+            after = header + ("\n" if not before.startswith("\n") else "") + before
+            rationale = "Added module docstring to satisfy style/lint and improve clarity."
+
+        mod = {
+            "timestamp": _utc_now(),
+            "file": file_path,
+            "before": before,
+            "after": after,
+            "rationale": rationale,
+            "perf_gain": 0.0,
+        }
+        return mod
+
+    def record_modification(self, mod: Dict[str, Any]) -> None:
+        """Append a modification record to memory (no duplicates by exact hash of before/after)."""
+        self.memory.setdefault("modifications", [])
+        # Deduplicate by (file, before[:128], after[:128]) to keep memory small
+        key = (mod.get("file",""), mod.get("before","")[:128], mod.get("after","")[:128])
+        for m in self.memory["modifications"]:
+            k2 = (m.get("file",""), m.get("before","")[:128], m.get("after","")[:128])
+            if k2 == key:
+                return
+        self.memory["modifications"].append(mod)
+        _save_json(self.memory_path, self.memory)
+
+if __name__ == "__main__":
+    core = AICore()
+    print("✅ AICore ready (schema-aligned).")

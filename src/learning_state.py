@@ -1,3 +1,4 @@
+# FILE: src/learning_state.py
 from __future__ import annotations
 from pathlib import Path
 from typing import Dict, Any, Tuple, List
@@ -26,10 +27,11 @@ def load_learning_state() -> Dict[str, Any]:
         # Reads are not restricted by Governor; safe to read directly.
         return json.loads(sp.read_text(encoding="utf-8"))
     # Fresh default
+    now = time.time()
     return {
         "version": 1,
-        "created_ts": time.time(),
-        "updated_ts": time.time(),
+        "created_ts": now,
+        "updated_ts": now,
         "coherence": {"score": 0.0, "history": []},   # running metrics
         "mutations": {"applied": 0, "accepted": 0},   # counters
         "notes": [],

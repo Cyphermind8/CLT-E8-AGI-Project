@@ -34,3 +34,5 @@ reports/overnight/*
 # Optional: keep logs out of version control
 reports/*.log
 runs/
+
+Archive/*.py
