@@ -1,0 +1,12 @@
+{
+  "variant": "llm-only",
+  "total": 5,
+  "passed": 0,
+  "rate": 0.0,
+  "avg_steps": 1.0,
+  "avg_cost_chars": 55,
+  "tool_calls": 0,
+  "ts": "20250920_172113",
+  "runlog": "logs\\tool_runs_llm-only_20250920_172113.jsonl",
+  "pack": "C:\\AI_Project\\data\\evals\\pack_retrieval_local.json"
+}

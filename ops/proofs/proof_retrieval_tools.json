@@ -1,0 +1,12 @@
+{
+  "variant": "react-bm25-unit",
+  "total": 5,
+  "passed": 5,
+  "rate": 1.0,
+  "avg_steps": 1.0,
+  "avg_cost_chars": 75,
+  "tool_calls": 5,
+  "ts": "20250920_172112",
+  "runlog": "C:\\AI_Project\\logs\\tool_runs_react-bm25-unit_20250920_172112.jsonl",
+  "pack": "data\\evals\\pack_retrieval_local.json"
+}
