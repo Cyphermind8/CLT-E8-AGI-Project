@@ -1,7 +1,7 @@
 param([string[]]$Variants,[int]$MaxParallel=6,[string]$Pack)
 $ErrorActionPreference="Stop"
 if ($PSScriptRoot){$root=Split-Path $PSScriptRoot -Parent}else{$root=(Get-Location).Path}
-$pyVenv=Join-Path $root ".venv\Scripts\python.exe"; $Py=(Test-Path $pyVenv)?$pyVenv:"python"
+$pyVenv=Join-Path $root ".venv\Scripts\python.exe"; $Py = if (Test-Path $pyVenv) { $pyVenv } else { "python" }
 if ($Pack){$pp = [IO.Path]::IsPathRooted($Pack) ? $Pack : (Join-Path $root $Pack); if(-not(Test-Path $pp)){throw "Pack not found: $pp"}; $Pack=$pp}
 if(-not $Variants -or $Variants.Count -eq 0){ $varsText=& $Py -m scripts.eval_long_horizon --list; if($LASTEXITCODE -ne 0){throw "Failed to list variants."}; $Variants=($varsText -split "`r?`n")|?{$_} }
 Write-Host "[*] Variants: $($Variants -join ', ')"
