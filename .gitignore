@@ -36,3 +36,8 @@ reports/*.log
 runs/
 
 Archive/*.py
+
+logs/
+pids/
+*.log
+

@@ -1,142 +1,228 @@
+# FILE: src/ai_decision.py
 from __future__ import annotations
-from dataclasses import dataclass
-from typing import Dict, Any, Optional, Tuple
+from typing import Any, Mapping, Sequence, Tuple
 
-# CLT-E8 coherence vector with 8 axes in [0,1]
-# 1 Accuracy / Truthfulness          (bench pass rate)
-# 2 Determinism / Repeatability      (bench determinism flag)
-# 3 Efficiency / Parsimony           (latency improvements)
-# 4 Simplicity / Minimality          (lines changed, smaller is better)
-# 5 Safety / Guardedness             (Governor writes only; assume safe unless signaled)
-# 6 Generality / Breadth             (task coverage; proxy = total tasks > 0)
-# 7 Robustness / Stability           (CI/pytest pass %; if unknown, neutral)
-# 8 Internal Coherence               (no contradictions among metrics; here a simple proxy)
+__all__ = ["decision", "argmax"]
 
-AXES = [
-    "accuracy", "determinism", "efficiency", "simplicity",
-    "safety", "generality", "robustness", "internal"
-]
+# ------------------------------
+# Generic argmax utilities
+# ------------------------------
+def _is_pair_seq(x: Sequence[Any]) -> bool:
+    try:
+        return len(x) > 0 and all(
+            isinstance(t, Sequence) and not isinstance(t, (str, bytes)) and len(t) == 2
+            for t in x  # type: ignore[arg-type]
+        )
+    except Exception:
+        return False
 
-@dataclass(frozen=True)
-class CoherenceVec:
-    accuracy: float
-    determinism: float
-    efficiency: float
-    simplicity: float
-    safety: float
-    generality: float
-    robustness: float
-    internal: float
+def argmax(items: Mapping[str, float] | Sequence[Tuple[str, float]] | Sequence[float]) -> Any:
+    """
+    Return the label (for mapping or (label, score) pairs) or index (for numeric sequences)
+    corresponding to the maximum score. Ties: lexicographic for labels, earliest index for sequences.
+    """
+    if isinstance(items, Mapping):
+        best_key = None
+        best_score = float("-inf")
+        for k, v in items.items():
+            try:
+                s = float(v)
+            except Exception:
+                continue
+            if (s > best_score) or (s == best_score and (best_key is None or str(k) < str(best_key))):
+                best_key, best_score = k, s
+        if best_key is None:
+            raise ValueError("No comparable values found in mapping.")
+        return best_key
 
-    def as_dict(self) -> Dict[str, float]:
-        return {k: getattr(self, k) for k in AXES}
+    if isinstance(items, Sequence) and not isinstance(items, (str, bytes)):
+        if _is_pair_seq(items):  # sequence of (label, score)
+            best_label = None
+            best_score = float("-inf")
+            for label, val in items:  # type: ignore[misc]
+                try:
+                    s = float(val)
+                except Exception:
+                    continue
+                if (s > best_score) or (s == best_score and (best_label is None or str(label) < str(best_label))):
+                    best_label, best_score = label, s
+            if best_label is None:
+                raise ValueError("No comparable values found in pair sequence.")
+            return best_label
+        # numeric sequence -> index
+        best_i = None
+        best_score = float("-inf")
+        for i, v in enumerate(items):
+            try:
+                s = float(v)
+            except Exception:
+                continue
+            if (s > best_score) or (s == best_score and best_i is None):
+                best_i, best_score = i, s
+        if best_i is None:
+            raise ValueError("No comparable values found in numeric sequence.")
+        return best_i
 
-def _clamp01(x: float) -> float:
-    return 0.0 if x < 0 else 1.0 if x > 1 else x
+    raise TypeError("Unsupported items type for argmax()")
 
-def _safe_ratio(num: float, den: float) -> float:
-    if den <= 0: return 0.0
-    return _clamp01(num / den)
+# ------------------------------
+# Eval-aware decision policy
+# ------------------------------
+def _pull_rate(block: Mapping[str, Any]) -> float | None:
+    """Prefer explicit rate; else derive passed/total."""
+    try:
+        s = block.get("success", {})
+        if "rate" in s:
+            return float(s["rate"])
+        if "passed" in s and "total" in s and s["total"]:
+            return float(s["passed"]) / float(s["total"])
+    except Exception:
+        pass
+    return None
 
-def assess_run(summary: Dict[str, Any]) -> CoherenceVec:
-    """Map a bench/summary (like your reports JSON) to a CLT-E8 vector."""
-    # Expected shape from your bench:
-    # summary["success"]["passed"], summary["success"]["total"], summary["success"]["rate"]
-    # summary["determinism_ok"] (bool)
-    # summary["latency"]["avg_s"]
-    passed = float(summary.get("success", {}).get("passed", 0))
-    total  = float(summary.get("success", {}).get("total", 0))
-    rate   = float(summary.get("success", {}).get("rate", _safe_ratio(passed, total)))
-    determinism_ok = bool(summary.get("determinism_ok", False))
+def _pull_latency(block: Mapping[str, Any]) -> float | None:
+    try:
+        lat = block.get("latency", {})
+        if "avg_s" in lat:
+            return float(lat["avg_s"])
+    except Exception:
+        pass
+    return None
 
-    # Latency: lower is better. Normalize against a soft target (3s).
-    avg_lat = float(summary.get("latency", {}).get("avg_s", 3.0))
-    efficiency = _clamp01(3.0 / max(avg_lat, 1e-6))  # ~1 near 3s, >1 capped
+def _pull_det(block: Mapping[str, Any]) -> bool | None:
+    v = block.get("determinism_ok")
+    if isinstance(v, bool):
+        return v
+    return None
 
-    # Generality proxy: tasks available and attempted
-    generality = 1.0 if total >= 12 else _clamp01(total / 12.0)
+def decision(
+    *args: Any,
+    threshold: float | None = 0.5,
+    default_label: str | None = None,
+    # Eval-policy knobs
+    lines_changed: int | None = None,
+    lint_ok: bool | None = None,
+    min_rate_gain: float = 0.01,
+    max_latency_regress: float = 0.00,
+    require_determinism: bool = True,
+    # Tool metrics (optional deltas)
+    tool_success_gain: float | None = None,   # absolute gain in tool success rate (e.g., +0.05)
+    steps_delta: float | None = None,         # new_avg_steps - old_avg_steps
+    cost_delta: float | None = None           # new_avg_cost_chars - old_avg_cost_chars
+) -> Any:
+    """
+    Two modes:
 
-    # Robustness proxy: if pytest pass rate known in caller extras, otherwise neutral 0.5
-    robustness = float(summary.get("_pytest_pass_rate", 0.5))
+    1) Eval policy mode: decision(before, after, ...[, tool_success_gain, steps_delta, cost_delta])
+       Approves if:
+         - rate_gain >= min_rate_gain (+ small extra if lines_changed > 50)
+         - latency does not regress (or is missing/NA)
+         - determinism OK (if required)
+         - lint_ok True (default True if unspecified)
+         - If tool deltas provided: tool_success_gain >= 0 and (steps_delta <= 0 or cost_delta <= 0)
 
-    # Safety: default 1.0 unless caller flags any guard violations
-    safety = 1.0 if not summary.get("_guard_violations") else 0.0
+       Returns a dict with 'approved', 'score', 'reasons', 'metrics'.
 
-    # Simplicity: filled by decision() from candidate metadata; neutral here
-    simplicity = 0.5
+    2) Generic mode (back-compat):
+       decision(x) where x is number/bool -> thresholded bool
+       decision(mapping/sequence) -> argmax label or index
+    """
+    # ---------- Eval policy mode ----------
+    if len(args) >= 2 and all(isinstance(a, Mapping) for a in args[:2]):
+        before: Mapping[str, Any] = args[0]  # type: ignore[assignment]
+        after:  Mapping[str, Any] = args[1]  # type: ignore[assignment]
 
-    # Internal coherence: if rate high & determinism ok, boost; if they contradict, reduce
-    internal = 0.8
-    if rate >= 0.9 and determinism_ok:
-        internal = 1.0
-    elif rate < 0.5 and determinism_ok:
-        internal = 0.6
-    elif rate >= 0.9 and not determinism_ok:
-        internal = 0.6
+        r0 = _pull_rate(before); r1 = _pull_rate(after)
+        l0 = _pull_latency(before); l1 = _pull_latency(after)
+        det_after = _pull_det(after)
 
-    return CoherenceVec(
-        accuracy=_clamp01(rate),
-        determinism=1.0 if determinism_ok else 0.2,
-        efficiency=efficiency,
-        simplicity=simplicity,
-        safety=safety,
-        generality=generality,
-        robustness=robustness,
-        internal=internal,
-    )
+        rate_gain = (r1 - r0) if (r0 is not None and r1 is not None) else None
+        lat_delta = (l1 - l0) if (l0 is not None and l1 is not None) else None  # negative is faster
 
-def combine(before: CoherenceVec, after: CoherenceVec, simplicity_bonus: float) -> Tuple[float, Dict[str, float]]:
-    """Weighted sum with a readable per-axis breakdown."""
-    w = {
-        "accuracy":     0.30,
-        "determinism":  0.15,
-        "efficiency":   0.15,
-        "simplicity":   0.10,
-        "safety":       0.10,
-        "generality":   0.05,
-        "robustness":   0.10,
-        "internal":     0.05,
-    }
-    axes_delta = {}
-    score = 0.0
-    for k in AXES:
-        b = getattr(before, k)
-        a = getattr(after,  k)
-        d = a - b
-        if k == "simplicity":
-            # "simplicity_bonus" comes from the candidate (smaller patch = higher bonus)
-            d = simplicity_bonus - (b - 0.5)  # center around 0.5 baseline
-        axes_delta[k] = d
-        score += w[k] * d
-    return score, axes_delta
+        # defaults and small-risk scaling
+        if lint_ok is None:
+            lint_ok = True
+        extra_gain = 0.005 if (isinstance(lines_changed, int) and lines_changed > 50) else 0.0
 
-def decision(before_summary: Dict[str, Any],
-             after_summary: Dict[str, Any],
-             *,
-             lines_changed: Optional[int] = None,
-             lint_ok: Optional[bool] = None) -> Dict[str, Any]:
-    """Return a decision report with total score and per-axis deltas."""
-    b = assess_run(before_summary)
-    a = assess_run(after_summary)
+        ok_rate = (rate_gain is not None) and (rate_gain >= (min_rate_gain + extra_gain))
+        ok_lat  = (lat_delta is None) or (lat_delta <= max_latency_regress)
+        ok_det  = (not require_determinism) or (det_after is True)
+        ok_lint = (lint_ok is True)
 
-    # Simplicity bonus: 1.0 for tiny patches, ~0.6 moderate, ≤0.5 large
-    if lines_changed is None:
-        simplicity_bonus = 0.5
-    else:
-        if lines_changed <= 10:   simplicity_bonus = 1.0
-        elif lines_changed <= 30: simplicity_bonus = 0.8
-        elif lines_changed <= 80: simplicity_bonus = 0.6
-        else:                     simplicity_bonus = 0.5
+        # Tool gate (only if provided)
+        if tool_success_gain is not None or steps_delta is not None or cost_delta is not None:
+            ok_tool = True
+            if tool_success_gain is not None and tool_success_gain < 0.0:
+                ok_tool = False
+            if steps_delta is not None and cost_delta is not None:
+                if steps_delta > 0.0 and cost_delta > 0.0:
+                    ok_tool = False
+            elif steps_delta is not None:
+                if steps_delta > 0.0: ok_tool = False
+            elif cost_delta is not None:
+                if cost_delta > 0.0: ok_tool = False
+        else:
+            ok_tool = True
 
-    # Lint/format OK nudges simplicity slightly up
-    if lint_ok:
-        simplicity_bonus = min(1.0, simplicity_bonus + 0.05)
+        approved = ok_rate and ok_lat and ok_det and ok_lint and ok_tool
 
-    score, axes_delta = combine(b, a, simplicity_bonus)
-    return {
-        "score": round(float(score), 6),
-        "simplicity_bonus": round(float(simplicity_bonus), 3),
-        "axes_delta": {k: round(v, 6) for k, v in axes_delta.items()},
-        "before": b.as_dict(),
-        "after":  a.as_dict(),
-    }
+        # ---- Score (monotonic, human-scaled) ----
+        score = 0.0
+        if rate_gain is not None: score += 100.0 * rate_gain            # +8 for +0.08
+        if lat_delta is not None: score += -10.0 * lat_delta            # faster (negative) => positive points
+        if det_after is True:     score += 1.0
+        elif det_after is False:  score -= 1.0
+        if lint_ok is True:       score += 0.5
+        elif lint_ok is False:    score -= 2.0
+        if isinstance(lines_changed, int) and lines_changed > 50:
+            score -= 0.01 * (lines_changed - 50)
+
+        # tool deltas
+        if tool_success_gain is not None: score += 100.0 * tool_success_gain
+        if steps_delta is not None:       score += -5.0 * steps_delta
+        if cost_delta is not None:        score += -0.001 * cost_delta
+
+        # reasons
+        reasons: list[str] = []
+        reasons.append(f"rate_gain={'NA' if rate_gain is None else f'{rate_gain:.3f}'}")
+        reasons.append("latency=NA" if lat_delta is None else f"latency_delta={lat_delta:+.3f}s")
+        if det_after is not None: reasons.append(f"determinism_after={det_after}")
+        reasons.append(f"lint_ok={lint_ok}")
+        if isinstance(lines_changed, int): reasons.append(f"lines_changed={lines_changed}")
+        if tool_success_gain is not None: reasons.append(f"tool_success_gain={tool_success_gain:+.3f}")
+        if steps_delta is not None:       reasons.append(f"steps_delta={steps_delta:+.3f}")
+        if cost_delta is not None:        reasons.append(f"cost_delta={cost_delta:+.1f}")
+
+        return {
+            "approved": approved,
+            "score": score,
+            "reasons": reasons,
+            "metrics": {
+                "rate_before": r0, "rate_after": r1, "rate_gain": rate_gain,
+                "latency_before": l0, "latency_after": l1, "latency_delta": lat_delta,
+                "determinism_after": det_after,
+                "lines_changed": lines_changed, "lint_ok": lint_ok,
+                "tool_success_gain": tool_success_gain,
+                "steps_delta": steps_delta, "cost_delta": cost_delta,
+            },
+        }
+
+    # ---------- Generic mode (back-compat) ----------
+    if len(args) == 1:
+        x = args[0]
+        if isinstance(x, (int, float, bool)):
+            if threshold is None:
+                return bool(x)
+            try:
+                return float(x) >= float(threshold)
+            except Exception:
+                return bool(x)
+        if isinstance(x, Mapping):
+            return argmax(x)
+        if isinstance(x, Sequence) and not isinstance(x, (str, bytes)):
+            if _is_pair_seq(x):
+                return argmax(x)
+            return argmax(x)
+        raise TypeError(f"Unsupported input type for decision(): {type(x).__name__}")
+
+    raise TypeError("decision(): unsupported argument pattern")

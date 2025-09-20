@@ -1,0 +1,171 @@
+# From C:\AI_Project (venv active)
+Set-Location C:\AI_Project
+
+# Backup current runner (idempotent)
+if (Test-Path .\scripts\run_auto_clt_loop.py) {
+  Copy-Item .\scripts\run_auto_clt_loop.py .\scripts\run_auto_clt_loop.py.bak -Force
+}
+
+@'
+# FILE: scripts/run_auto_clt_loop.py
+# Robust entrypoint for your CLT auto loop. It imports scripts.auto_clt_loop
+# and calls a sensible function among:
+#   auto_loop, auto_clt_loop, run, run_loop, main, loop
+# Works with either:
+#   python -m scripts.run_auto_clt_loop --hours 1 --pause-seconds 300
+# or:
+#   python scripts/run_auto_clt_loop.py --hours 1 --pause-seconds 300
+#
+# It gracefully handles modules where `main()` parses sys.argv itself,
+# or `main(argv)` expects an argv list, or functions that accept **kwargs.
+
+from __future__ import annotations
+
+import argparse
+import importlib
+import inspect
+import os
+import sys
+import types
+from typing import Tuple, Callable, Any
+
+CANDIDATES = ["auto_loop", "auto_clt_loop", "run", "run_loop", "main", "loop"]
+
+def _import_module() -> types.ModuleType:
+    # Try package-relative (module mode)
+    try:
+        from . import auto_clt_loop as mod  # type: ignore
+        return mod
+    except Exception:
+        pass
+    # Try absolute
+    try:
+        return importlib.import_module("scripts.auto_clt_loop")
+    except Exception:
+        pass
+    # Last resort: put project root on sys.path and import
+    this_dir = os.path.dirname(os.path.abspath(__file__))
+    root = os.path.abspath(os.path.join(this_dir, os.pardir))
+    if root not in sys.path:
+        sys.path.insert(0, root)
+    return importlib.import_module("scripts.auto_clt_loop")
+
+def _callable_accepts_no_args(fn: Callable[..., Any]) -> bool:
+    try:
+        sig = inspect.signature(fn)
+    except (TypeError, ValueError):
+        return True  # builtins or C-callables—assume ok
+    if not sig.parameters:
+        return True
+    # All params have defaults -> callable with no args
+    return all(
+        p.default is not inspect._empty or p.kind in (inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD)
+        for p in sig.parameters.values()
+    )
+
+def _find_entry(mod: types.ModuleType) -> Tuple[Callable[..., Any], str]:
+    public = [n for n in dir(mod) if not n.startswith("_")]
+    for name in CANDIDATES:
+        fn = getattr(mod, name, None)
+        if not callable(fn):
+            continue
+        # Quick accept if it can be called with no args
+        if _callable_accepts_no_args(fn):
+            return fn, name
+        # Otherwise inspect parameters to see if we can map ours
+        try:
+            sig = inspect.signature(fn)
+        except (TypeError, ValueError):
+            return fn, name
+        params = sig.parameters
+        param_names = set(params.keys())
+        if any(p.kind == inspect.Parameter.VAR_KEYWORD for p in params.values()):
+            return fn, name
+        # If it obviously wants our knobs (or synonyms), accept
+        knobs = {"hours", "pause_seconds", "pause", "sleep"}
+        if param_names & knobs:
+            return fn, name
+        # Common CLI style: main(argv) / main(args)
+        if len(params) == 1:
+            sole = next(iter(params.values()))
+            if sole.name.lower() in {"argv", "args", "arglist"} or sole.kind in (
+                inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD
+            ):
+                return fn, name
+    raise RuntimeError(
+        "No suitable entry in scripts.auto_clt_loop.\n"
+        f"Tried: {CANDIDATES}\n"
+        f"Found public symbols: {public}"
+    )
+
+def _call_entry(fn: Callable[..., Any], *, hours: float, pause_seconds: int) -> Any:
+    # Decide how to call based on signature
+    try:
+        sig = inspect.signature(fn)
+        params = sig.parameters
+        if not params:
+            return fn()
+        names = [p.name for p in params.values()]
+        kinds = [p.kind for p in params.values()]
+        # main(argv) / main(args)
+        if len(params) == 1 and names[0].lower() in {"argv", "args", "arglist"}:
+            return fn(sys.argv[1:])
+        # Collect kwargs where names match ours or synonyms
+        kwargs = {}
+        if "hours" in names:
+            kwargs["hours"] = hours
+        if "pause_seconds" in names:
+            kwargs["pause_seconds"] = pause_seconds
+        elif "pause" in names:
+            kwargs["pause"] = pause_seconds
+        elif "sleep" in names:
+            kwargs["sleep"] = pause_seconds
+        # If function also tolerates **kwargs, pass what we have
+        if any(k == inspect.Parameter.VAR_KEYWORD for k in kinds):
+            return fn(**kwargs)
+        # If our mapping covered all required (non-default) parameters, call it
+        required = [
+            p.name for p in params.values()
+            if p.default is inspect._empty
+            and p.kind in (inspect.Parameter.POSITIONAL_ONLY, inspect.Parameter.POSITIONAL_OR_KEYWORD, inspect.Parameter.KEYWORD_ONLY)
+        ]
+        if all(r in kwargs for r in required):
+            return fn(**kwargs)
+        # Last resort: if all params have defaults, call with none
+        if all(p.default is not inspect._empty or p.kind in (inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD)
+               for p in params.values()):
+            return fn()
+        # Fall back to positional if acceptable (hours, pause_seconds)
+        if len(params) >= 1 and params[next(iter(params))].kind in (
+            inspect.Parameter.POSITIONAL_ONLY, inspect.Parameter.POSITIONAL_OR_KEYWORD
+        ):
+            # Try positional call with our two knobs as best-effort
+            try:
+                return fn(hours, pause_seconds)
+            except TypeError:
+                pass
+        # Give an explicit error with the signature for fast debugging
+        raise TypeError(f"Entry function signature not compatible: {fn.__name__}{sig}")
+    except Exception:
+        # As a final fallback, try bare call (e.g., function internally parses sys.argv)
+        return fn()
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--hours", type=float, required=True, help="Duration to run (fractional hours allowed).")
+    ap.add_argument("--pause-seconds", type=int, default=300, help="Pause between cycles.")
+    args = ap.parse_args()
+
+    mod = _import_module()
+    fn, name = _find_entry(mod)
+    _call_entry(fn, hours=args.hours, pause_seconds=args.pause_seconds)
+    return 0
+
+if __name__ == "__main__":
+    raise SystemExit(main())
+'@ | Set-Content .\scripts\run_auto_clt_loop.py -Encoding utf8
+
+# Ensure 'scripts' is a package
+if (-not (Test-Path .\scripts\__init__.py)) {
+  Set-Content .\scripts\__init__.py "# package: scripts" -Encoding utf8
+}
