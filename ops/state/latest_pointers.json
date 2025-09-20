@@ -1,0 +1,10 @@
+{
+  "pack": "C:\\AI_Project\\data\\evals\\pack_e8_canonical.json",
+  "tool_before": "C:\\AI_Project\\logs\\tool_metrics_react-bm25-unit_20250920_141132.json",
+  "core_before": "C:\\AI_Project\\logs\\metrics_latest.json",
+  "approved": true,
+  "rationale": "override: tool_success_gain>0",
+  "core_after": "C:\\AI_Project\\logs\\metrics_20250920_143536.json",
+  "ts": "2025-09-20T14:39:14",
+  "tool_after": "C:\\AI_Project\\logs\\tool_metrics_react-bm25-unit_20250920_141639.json"
+}

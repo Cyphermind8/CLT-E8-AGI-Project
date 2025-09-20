@@ -1,0 +1,12 @@
+{
+  "variant": "react-bm25-unit",
+  "total": 10,
+  "passed": 10,
+  "rate": 1.0,
+  "avg_steps": 1.0,
+  "avg_cost_chars": 193,
+  "tool_calls": 10,
+  "ts": "20250920_141639",
+  "runlog": "C:\\AI_Project\\logs\\tool_runs_react-bm25-unit_20250920_141639.jsonl",
+  "pack": "data\\evals\\pack_e8_canonical.json"
+}
