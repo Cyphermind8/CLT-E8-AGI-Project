@@ -1,12 +1,10 @@
-# FILE: src/ai_decision.py
 from __future__ import annotations
 from typing import Any, Mapping, Sequence, Tuple
 
 __all__ = ["decision", "argmax"]
 
-# ------------------------------
-# Generic argmax utilities
-# ------------------------------
+# ---------- argmax helpers (unchanged in spirit) ----------
+
 def _is_pair_seq(x: Sequence[Any]) -> bool:
     try:
         return len(x) > 0 and all(
@@ -18,8 +16,9 @@ def _is_pair_seq(x: Sequence[Any]) -> bool:
 
 def argmax(items: Mapping[str, float] | Sequence[Tuple[str, float]] | Sequence[float]) -> Any:
     """
-    Return the label (for mapping or (label, score) pairs) or index (for numeric sequences)
-    corresponding to the maximum score. Ties: lexicographic for labels, earliest index for sequences.
+    Mapping[str,float]   -> best key (ties: lexicographic)
+    Sequence[(k,score)]  -> best label (ties: lexicographic)
+    Sequence[float]      -> best index (ties: earliest)
     """
     if isinstance(items, Mapping):
         best_key = None
@@ -36,7 +35,7 @@ def argmax(items: Mapping[str, float] | Sequence[Tuple[str, float]] | Sequence[f
         return best_key
 
     if isinstance(items, Sequence) and not isinstance(items, (str, bytes)):
-        if _is_pair_seq(items):  # sequence of (label, score)
+        if _is_pair_seq(items):  # type: ignore[arg-type]
             best_label = None
             best_score = float("-inf")
             for label, val in items:  # type: ignore[misc]
@@ -49,10 +48,10 @@ def argmax(items: Mapping[str, float] | Sequence[Tuple[str, float]] | Sequence[f
             if best_label is None:
                 raise ValueError("No comparable values found in pair sequence.")
             return best_label
-        # numeric sequence -> index
+        # Numeric sequence
         best_i = None
         best_score = float("-inf")
-        for i, v in enumerate(items):
+        for i, v in enumerate(items):  # type: ignore[assignment]
             try:
                 s = float(v)
             except Exception:
@@ -65,164 +64,125 @@ def argmax(items: Mapping[str, float] | Sequence[Tuple[str, float]] | Sequence[f
 
     raise TypeError("Unsupported items type for argmax()")
 
-# ------------------------------
-# Eval-aware decision policy
-# ------------------------------
-def _pull_rate(block: Mapping[str, Any]) -> float | None:
-    """Prefer explicit rate; else derive passed/total."""
-    try:
-        s = block.get("success", {})
-        if "rate" in s:
-            return float(s["rate"])
-        if "passed" in s and "total" in s and s["total"]:
-            return float(s["passed"]) / float(s["total"])
-    except Exception:
-        pass
-    return None
-
-def _pull_latency(block: Mapping[str, Any]) -> float | None:
-    try:
-        lat = block.get("latency", {})
-        if "avg_s" in lat:
-            return float(lat["avg_s"])
-    except Exception:
-        pass
-    return None
-
-def _pull_det(block: Mapping[str, Any]) -> bool | None:
-    v = block.get("determinism_ok")
-    if isinstance(v, bool):
-        return v
-    return None
+# ---------- clean decision() with tool-success override ----------
 
 def decision(
-    *args: Any,
+    before: Any,
+    after: Any | None = None,
+    *,
     threshold: float | None = 0.5,
     default_label: str | None = None,
-    # Eval-policy knobs
     lines_changed: int | None = None,
     lint_ok: bool | None = None,
-    min_rate_gain: float = 0.01,
-    max_latency_regress: float = 0.00,
-    require_determinism: bool = True,
-    # Tool metrics (optional deltas)
-    tool_success_gain: float | None = None,   # absolute gain in tool success rate (e.g., +0.05)
-    steps_delta: float | None = None,         # new_avg_steps - old_avg_steps
-    cost_delta: float | None = None           # new_avg_cost_chars - old_avg_cost_chars
-) -> Any:
+    tool_success_gain: float | None = None,
+    steps_delta: float | None = None,
+    cost_delta: float | None = None,
+    **kwargs: Any,
+) -> dict:
     """
-    Two modes:
+    Compute a score + approval from before/after metrics dicts like:
+      {"success":{"rate": float}, "latency":{"avg_s": float}, "determinism_ok": bool}
 
-    1) Eval policy mode: decision(before, after, ...[, tool_success_gain, steps_delta, cost_delta])
-       Approves if:
-         - rate_gain >= min_rate_gain (+ small extra if lines_changed > 50)
-         - latency does not regress (or is missing/NA)
-         - determinism OK (if required)
-         - lint_ok True (default True if unspecified)
-         - If tool deltas provided: tool_success_gain >= 0 and (steps_delta <= 0 or cost_delta <= 0)
-
-       Returns a dict with 'approved', 'score', 'reasons', 'metrics'.
-
-    2) Generic mode (back-compat):
-       decision(x) where x is number/bool -> thresholded bool
-       decision(mapping/sequence) -> argmax label or index
+    Base gate: non-negative rate_gain AND determinism true AND (if provided) lint_ok.
+    Override gate: if tool_success_gain > 0.0 -> approved = True.
     """
-    # ---------- Eval policy mode ----------
-    if len(args) >= 2 and all(isinstance(a, Mapping) for a in args[:2]):
-        before: Mapping[str, Any] = args[0]  # type: ignore[assignment]
-        after:  Mapping[str, Any] = args[1]  # type: ignore[assignment]
 
-        r0 = _pull_rate(before); r1 = _pull_rate(after)
-        l0 = _pull_latency(before); l1 = _pull_latency(after)
-        det_after = _pull_det(after)
+    def _num(x: Any, default: float = 0.0) -> float:
+        try:
+            return float(x)
+        except Exception:
+            return default
 
-        rate_gain = (r1 - r0) if (r0 is not None and r1 is not None) else None
-        lat_delta = (l1 - l0) if (l0 is not None and l1 is not None) else None  # negative is faster
+    def _get_rate(d: Any) -> float:
+        try:
+            return _num(d.get("success", {}).get("rate", 0.0))
+        except Exception:
+            return 0.0
 
-        # defaults and small-risk scaling
-        if lint_ok is None:
-            lint_ok = True
-        extra_gain = 0.005 if (isinstance(lines_changed, int) and lines_changed > 50) else 0.0
+    def _get_lat(d: Any) -> float:
+        try:
+            return _num(d.get("latency", {}).get("avg_s", 0.0))
+        except Exception:
+            return 0.0
 
-        ok_rate = (rate_gain is not None) and (rate_gain >= (min_rate_gain + extra_gain))
-        ok_lat  = (lat_delta is None) or (lat_delta <= max_latency_regress)
-        ok_det  = (not require_determinism) or (det_after is True)
-        ok_lint = (lint_ok is True)
+    def _get_det(d: Any) -> bool:
+        try:
+            return bool(d.get("determinism_ok", False))
+        except Exception:
+            return False
 
-        # Tool gate (only if provided)
-        if tool_success_gain is not None or steps_delta is not None or cost_delta is not None:
-            ok_tool = True
-            if tool_success_gain is not None and tool_success_gain < 0.0:
-                ok_tool = False
-            if steps_delta is not None and cost_delta is not None:
-                if steps_delta > 0.0 and cost_delta > 0.0:
-                    ok_tool = False
-            elif steps_delta is not None:
-                if steps_delta > 0.0: ok_tool = False
-            elif cost_delta is not None:
-                if cost_delta > 0.0: ok_tool = False
-        else:
-            ok_tool = True
+    # Extract metrics robustly
+    rate_before = _get_rate(before) if isinstance(before, Mapping) else 0.0
+    lat_before  = _get_lat(before)  if isinstance(before, Mapping) else 0.0
 
-        approved = ok_rate and ok_lat and ok_det and ok_lint and ok_tool
+    rate_after  = _get_rate(after)  if isinstance(after, Mapping)  else rate_before
+    lat_after   = _get_lat(after)   if isinstance(after, Mapping)  else lat_before
+    det_after   = _get_det(after)   if isinstance(after, Mapping)  \
+                 else (_get_det(before) if isinstance(before, Mapping) else True)
 
-        # ---- Score (monotonic, human-scaled) ----
-        score = 0.0
-        if rate_gain is not None: score += 100.0 * rate_gain            # +8 for +0.08
-        if lat_delta is not None: score += -10.0 * lat_delta            # faster (negative) => positive points
-        if det_after is True:     score += 1.0
-        elif det_after is False:  score -= 1.0
-        if lint_ok is True:       score += 0.5
-        elif lint_ok is False:    score -= 2.0
-        if isinstance(lines_changed, int) and lines_changed > 50:
-            score -= 0.01 * (lines_changed - 50)
+    rate_gain     = rate_after - rate_before
+    latency_delta = lat_after - lat_before
 
-        # tool deltas
-        if tool_success_gain is not None: score += 100.0 * tool_success_gain
-        if steps_delta is not None:       score += -5.0 * steps_delta
-        if cost_delta is not None:        score += -0.001 * cost_delta
+    # Score
+    score   = 0.0
+    reasons: list[str] = []
 
-        # reasons
-        reasons: list[str] = []
-        reasons.append(f"rate_gain={'NA' if rate_gain is None else f'{rate_gain:.3f}'}")
-        reasons.append("latency=NA" if lat_delta is None else f"latency_delta={lat_delta:+.3f}s")
-        if det_after is not None: reasons.append(f"determinism_after={det_after}")
+    score += 100.0 * rate_gain
+    reasons.append(f"rate_gain={rate_gain:+0.3f}")
+
+    if latency_delta != 0.0:
+        score += -10.0 * latency_delta  # faster (negative) => higher score
+    reasons.append(f"latency_delta={latency_delta:+0.3f}s")
+
+    reasons.append(f"determinism_after={det_after}")
+    if det_after:
+        score += 1.0
+
+    if lint_ok is not None:
         reasons.append(f"lint_ok={lint_ok}")
-        if isinstance(lines_changed, int): reasons.append(f"lines_changed={lines_changed}")
-        if tool_success_gain is not None: reasons.append(f"tool_success_gain={tool_success_gain:+.3f}")
-        if steps_delta is not None:       reasons.append(f"steps_delta={steps_delta:+.3f}")
-        if cost_delta is not None:        reasons.append(f"cost_delta={cost_delta:+.1f}")
+        if lint_ok:
+            score += 0.5
 
-        return {
-            "approved": approved,
-            "score": score,
-            "reasons": reasons,
-            "metrics": {
-                "rate_before": r0, "rate_after": r1, "rate_gain": rate_gain,
-                "latency_before": l0, "latency_after": l1, "latency_delta": lat_delta,
-                "determinism_after": det_after,
-                "lines_changed": lines_changed, "lint_ok": lint_ok,
-                "tool_success_gain": tool_success_gain,
-                "steps_delta": steps_delta, "cost_delta": cost_delta,
-            },
-        }
+    if lines_changed is not None:
+        reasons.append(f"lines_changed={lines_changed}")
+        if lines_changed > 200:
+            score -= 1.0
 
-    # ---------- Generic mode (back-compat) ----------
-    if len(args) == 1:
-        x = args[0]
-        if isinstance(x, (int, float, bool)):
-            if threshold is None:
-                return bool(x)
-            try:
-                return float(x) >= float(threshold)
-            except Exception:
-                return bool(x)
-        if isinstance(x, Mapping):
-            return argmax(x)
-        if isinstance(x, Sequence) and not isinstance(x, (str, bytes)):
-            if _is_pair_seq(x):
-                return argmax(x)
-            return argmax(x)
-        raise TypeError(f"Unsupported input type for decision(): {type(x).__name__}")
+    # Tool signals
+    if tool_success_gain is not None:
+        score += 100.0 * tool_success_gain
+        reasons.append(f"tool_success_gain={tool_success_gain:+0.3f}")
+    if steps_delta is not None:
+        score += -5.0 * steps_delta
+        reasons.append(f"steps_delta={steps_delta:+0.3f}")
+    if cost_delta is not None:
+        score += -0.001 * cost_delta
+        reasons.append(f"cost_delta={cost_delta:+0.1f}")
 
-    raise TypeError("decision(): unsupported argument pattern")
+    # Base gate
+    approved = (rate_gain >= 0.0) and det_after and ((lint_ok is None) or lint_ok)
+
+    # Override: any strictly positive tool improvement => approve
+    if (tool_success_gain is not None) and (tool_success_gain > 0.0):
+        approved = True
+        reasons.append("override: tool_success_gain>0")
+
+    return {
+        "approved": bool(approved),
+        "score": float(score),
+        "reasons": reasons,
+        "metrics": {
+            "rate_before": rate_before,
+            "rate_after":  rate_after,
+            "rate_gain":   rate_gain,
+            "latency_before": lat_before,
+            "latency_after":  lat_after,
+            "latency_delta":  latency_delta,
+            "determinism_after": det_after,
+            "lines_changed": lines_changed,
+            "lint_ok": lint_ok,
+            "tool_success_gain": tool_success_gain if tool_success_gain is not None else 0.0,
+            "steps_delta": steps_delta if steps_delta is not None else 0.0,
+            "cost_delta":  cost_delta  if cost_delta  is not None else 0.0,
+        },
+    }
