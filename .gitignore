@@ -41,3 +41,8 @@ logs/
 pids/
 *.log
 
+
+# Local lab + scratch
+scripts/_lab/
+_replacements.txt
+
